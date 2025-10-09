@@ -9,6 +9,7 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
   // mocks
   const places = [
     {
+      id: '1',
       title: 'Beautiful & luxurious apartment at great location',
       type: 'Apartment',
       price: 120,
@@ -18,6 +19,7 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
       isFavorite: false
     },
     {
+      id: '2',
       title: 'Wood and stone place',
       type: 'Room',
       price: 80,
@@ -27,6 +29,7 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
       isFavorite: true
     },
     {
+      id: '3',
       title: 'Canal View Prinsengracht',
       type: 'Apartment',
       price: 132,
@@ -36,6 +39,7 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
       isFavorite: false
     },
     {
+      id: '4',
       title: 'Nice, cozy, warm big bed apartment',
       type: 'Apartment',
       price: 180,
@@ -45,6 +49,7 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
       isFavorite: false
     },
     {
+      id: '5',
       title: 'Wood and stone place',
       type: 'Room',
       price: 80,
@@ -145,9 +150,9 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {places.map((place, index) => (
+                {places.map((place) => (
                   <PlaceCard
-                    key={index}
+                    key={place.id}
                     title={place.title}
                     type={place.type}
                     price={place.price}
