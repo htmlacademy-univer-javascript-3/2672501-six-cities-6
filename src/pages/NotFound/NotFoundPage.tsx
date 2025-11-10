@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export const NotFoundPage: React.FC = () => (
   <div className="page page--gray page--main">
@@ -6,9 +7,9 @@ export const NotFoundPage: React.FC = () => (
       <div className="container">
         <div className="header__wrapper">
           <div className="header__left">
-            <a className="header__logo-link" href="/">
+            <Link className="header__logo-link" to="/">
               <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -24,9 +25,9 @@ export const NotFoundPage: React.FC = () => (
               <p className="cities__status-description">
                 The page you are looking for does not exist.
               </p>
-              <a href="/" className="button cities__button">
+              <Link to="/" className="button cities__button">
                 Go to main page
-              </a>
+              </Link>
             </div>
           </section>
           <div className="cities__right-section"></div>
