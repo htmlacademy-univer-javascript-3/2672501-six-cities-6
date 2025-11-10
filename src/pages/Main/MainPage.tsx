@@ -1,64 +1,33 @@
-import React from 'react';
-import { PlaceCard } from '../../shared/components/PlaceCard';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { OffersList } from '../../shared/components/OffersList';
+import { Offer } from '../../mocks/offers';
 
 interface MainPageProps {
-  placesCount: number;
+  offers: Offer[];
 }
 
-const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
-  // mocks
-  const places = [
-    {
-      id: '1',
-      title: 'Beautiful & luxurious apartment at great location',
-      type: 'Apartment',
-      price: 120,
-      rating: 80,
-      image: 'img/apartment-01.jpg',
-      isPremium: true,
-      isFavorite: false
-    },
-    {
-      id: '2',
-      title: 'Wood and stone place',
-      type: 'Room',
-      price: 80,
-      rating: 80,
-      image: 'img/room.jpg',
-      isPremium: false,
-      isFavorite: true
-    },
-    {
-      id: '3',
-      title: 'Canal View Prinsengracht',
-      type: 'Apartment',
-      price: 132,
-      rating: 80,
-      image: 'img/apartment-02.jpg',
-      isPremium: false,
-      isFavorite: false
-    },
-    {
-      id: '4',
-      title: 'Nice, cozy, warm big bed apartment',
-      type: 'Apartment',
-      price: 180,
-      rating: 100,
-      image: 'img/apartment-03.jpg',
-      isPremium: true,
-      isFavorite: false
-    },
-    {
-      id: '5',
-      title: 'Wood and stone place',
-      type: 'Room',
-      price: 80,
-      rating: 80,
-      image: 'img/room.jpg',
-      isPremium: false,
-      isFavorite: true
-    }
-  ];
+const MainPage: React.FC<MainPageProps> = ({ offers }) => {
+  const [, setActiveCardId] = useState<string | null>(null);
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [currentSort, setCurrentSort] = useState('Popular');
+
+  const handleCardMouseEnter = (id: string) => {
+    setActiveCardId(id);
+  };
+
+  const handleCardMouseLeave = () => {
+    setActiveCardId(null);
+  };
+
+  const handleSortMenuToggle = () => {
+    setIsSortMenuOpen(!isSortMenuOpen);
+  };
+
+  const handleSortOptionClick = (sortType: string) => {
+    setCurrentSort(sortType);
+    setIsSortMenuOpen(false);
+  };
 
   return (
     <div className="page page--gray page--main">
@@ -66,24 +35,24 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className="header__logo-link header__logo-link--active">
+              <Link className="header__logo-link header__logo-link--active" to="/">
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-              </a>
+              </Link>
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="#">
+                  <Link className="header__nav-link header__nav-link--profile" to="/favorites">
                     <div className="header__avatar-wrapper user__avatar-wrapper">
                     </div>
                     <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
                     <span className="header__favorite-count">3</span>
-                  </a>
+                  </Link>
                 </li>
                 <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
+                  <Link className="header__nav-link" to="/login">
                     <span className="header__signout">Sign out</span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -133,36 +102,55 @@ const MainPage: React.FC<MainPageProps> = ({ placesCount }) => {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{placesCount} places to stay in Amsterdam</b>
+              <b className="places__found">{offers.length} places to stay in Amsterdam</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
-                <span className="places__sorting-type" tabIndex={0}>
-                  Popular
+                <span
+                  className="places__sorting-type"
+                  tabIndex={0}
+                  onClick={handleSortMenuToggle}
+                >
+                  {currentSort}
                   <svg className="places__sorting-arrow" width="7" height="4">
                     <use xlinkHref="#icon-arrow-select"></use>
                   </svg>
                 </span>
-                <ul className="places__options places__options--custom places__options--opened">
-                  <li className="places__option places__option--active" tabIndex={0}>Popular</li>
-                  <li className="places__option" tabIndex={0}>Price: low to high</li>
-                  <li className="places__option" tabIndex={0}>Price: high to low</li>
-                  <li className="places__option" tabIndex={0}>Top rated first</li>
+                <ul className={`places__options places__options--custom ${isSortMenuOpen ? 'places__options--opened' : ''}`}>
+                  <li
+                    className={`places__option ${currentSort === 'Popular' ? 'places__option--active' : ''}`}
+                    tabIndex={0}
+                    onClick={() => handleSortOptionClick('Popular')}
+                  >
+                    Popular
+                  </li>
+                  <li
+                    className={`places__option ${currentSort === 'Price: low to high' ? 'places__option--active' : ''}`}
+                    tabIndex={0}
+                    onClick={() => handleSortOptionClick('Price: low to high')}
+                  >
+                    Price: low to high
+                  </li>
+                  <li
+                    className={`places__option ${currentSort === 'Price: high to low' ? 'places__option--active' : ''}`}
+                    tabIndex={0}
+                    onClick={() => handleSortOptionClick('Price: high to low')}
+                  >
+                    Price: high to low
+                  </li>
+                  <li
+                    className={`places__option ${currentSort === 'Top rated first' ? 'places__option--active' : ''}`}
+                    tabIndex={0}
+                    onClick={() => handleSortOptionClick('Top rated first')}
+                  >
+                    Top rated first
+                  </li>
                 </ul>
               </form>
-              <div className="cities__places-list places__list tabs__content">
-                {places.map((place) => (
-                  <PlaceCard
-                    key={place.id}
-                    title={place.title}
-                    type={place.type}
-                    price={place.price}
-                    rating={place.rating}
-                    image={place.image}
-                    isPremium={place.isPremium}
-                    isFavorite={place.isFavorite}
-                  />
-                ))}
-              </div>
+              <OffersList
+                offers={offers}
+                onMouseEnter={handleCardMouseEnter}
+                onMouseLeave={handleCardMouseLeave}
+              />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map"></section>
