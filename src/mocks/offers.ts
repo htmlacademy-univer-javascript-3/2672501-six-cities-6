@@ -66,8 +66,8 @@ export const offers: Offer[] = [
     description: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century. An independent House, strategically located between Rembrand Square and National Opera, but where the bustle of the city comes to rest in this alley flowery and colorful.',
     city: 'Amsterdam',
     location: {
-      latitude: 52.35514938496378,
-      longitude: 4.673877537499948
+      latitude: 52.3909553943508,
+      longitude: 4.85309666406198
     }
   },
   {
@@ -107,8 +107,8 @@ export const offers: Offer[] = [
     description: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century.',
     city: 'Amsterdam',
     location: {
-      latitude: 52.3809553943508,
-      longitude: 4.939309666406198
+      latitude: 52.3609553943508,
+      longitude: 4.85309666406198
     }
   },
   {
@@ -192,8 +192,8 @@ export const offers: Offer[] = [
     description: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century. An independent House, strategically located between Rembrand Square and National Opera, but where the bustle of the city comes to rest in this alley flowery and colorful.',
     city: 'Amsterdam',
     location: {
-      latitude: 52.3609553943508,
-      longitude: 4.85309666406198
+      latitude: 52.3909553943508,
+      longitude: 4.929309666406198
     }
   },
   {
