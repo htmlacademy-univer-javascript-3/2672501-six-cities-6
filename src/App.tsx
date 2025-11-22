@@ -15,7 +15,7 @@ interface AppProps {
 export const App: React.FC<AppProps> = ({ offers }) => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<MainPage offers={offers} />} />
+      <Route path="/" element={<MainPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/favorites"
