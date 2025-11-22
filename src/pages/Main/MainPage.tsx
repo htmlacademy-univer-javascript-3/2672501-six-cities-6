@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { OffersList } from '../../shared/components/OffersList';
+import { Map } from '../../shared/components/Map';
 import { Offer } from '../../mocks/offers';
 
 interface MainPageProps {
@@ -28,6 +29,12 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
     setCurrentSort(sortType);
     setIsSortMenuOpen(false);
   };
+
+  const amsterdamOffers = offers.filter((offer) => offer.city === 'Amsterdam');
+
+  const cityCenter: [number, number] = amsterdamOffers.length > 0
+    ? [amsterdamOffers[0].location.latitude, amsterdamOffers[0].location.longitude]
+    : [52.370216, 4.895168];
 
   return (
     <div className="page page--gray page--main">
@@ -102,7 +109,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offers.length} places to stay in Amsterdam</b>
+              <b className="places__found">{amsterdamOffers.length} places to stay in Amsterdam</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span
@@ -147,13 +154,15 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
                 </ul>
               </form>
               <OffersList
-                offers={offers}
+                offers={amsterdamOffers}
                 onMouseEnter={handleCardMouseEnter}
                 onMouseLeave={handleCardMouseLeave}
               />
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <section className="cities__map map">
+                <Map offers={amsterdamOffers} center={cityCenter} />
+              </section>
             </div>
           </div>
         </div>
