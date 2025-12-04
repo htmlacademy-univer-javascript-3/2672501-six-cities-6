@@ -6,9 +6,17 @@ interface PlaceCardProps {
   offer: Offer;
   onMouseEnter?: (id: string) => void;
   onMouseLeave?: () => void;
+  cardClassName?: string;
+  imageWrapperClassName?: string;
 }
 
-const PlaceCard: React.FC<PlaceCardProps> = ({ offer, onMouseEnter, onMouseLeave }) => {
+const PlaceCard: React.FC<PlaceCardProps> = ({
+  offer,
+  onMouseEnter,
+  onMouseLeave,
+  cardClassName = 'cities__card place-card',
+  imageWrapperClassName = 'cities__image-wrapper place-card__image-wrapper'
+}) => {
   const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
   };
@@ -27,7 +35,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ offer, onMouseEnter, onMouseLeave
 
   return (
     <article
-      className="cities__card place-card"
+      className={cardClassName}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -36,7 +44,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ offer, onMouseEnter, onMouseLeave
           <span>Premium</span>
         </div>
       )}
-      <div className="cities__image-wrapper place-card__image-wrapper">
+      <div className={imageWrapperClassName}>
         <Link to={`/offer/${offer.id}`}>
           <img
             className="place-card__image"
