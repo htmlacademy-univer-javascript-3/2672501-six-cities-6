@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { OffersList } from '../../shared/components/OffersList';
@@ -7,6 +7,7 @@ import { CitiesList } from '../../shared/components/CitiesList';
 import { SortingOptions } from '../../shared/components/SortingOptions';
 import { getCityOffers, getCity } from '../../app/selectors';
 import { setCity } from '../../app/action';
+import { Offer } from '../../mocks/offers';
 
 const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
@@ -29,20 +30,20 @@ export const MainPage: React.FC = () => {
     dispatch(setCity(city));
   };
 
-  const sortedOffers = React.useMemo(() => {
-    if (currentSort === 'Price: low to high') {
-      return [...cityOffers].sort((a, b) => a.price - b.price);
+  const sortedOffers = useMemo(() => {
+    const offersCopy = [...cityOffers];
+    
+    switch (currentSort) {
+      case 'Price: low to high':
+        return offersCopy.sort((a, b) => a.price - b.price);
+      case 'Price: high to low':
+        return offersCopy.sort((a, b) => b.price - a.price);
+      case 'Top rated first':
+        return offersCopy.sort((a, b) => b.rating - a.rating);
+      case 'Popular':
+      default:
+        return offersCopy;
     }
-
-    if (currentSort === 'Price: high to low') {
-      return [...cityOffers].sort((a, b) => b.price - a.price);
-    }
-
-    if (currentSort === 'Top rated first') {
-      return [...cityOffers].sort((a, b) => b.rating - a.rating);
-    }
-
-    return cityOffers;
   }, [cityOffers, currentSort]);
 
   const cityCenter: [number, number] = sortedOffers.length > 0

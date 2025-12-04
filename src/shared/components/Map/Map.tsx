@@ -22,7 +22,7 @@ const activeIcon = new Icon({
   iconAnchor: [13.5, 39]
 });
 
-export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOfferId }) => (
+export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOfferId = null }) => (
   <MapContainer
     center={center}
     zoom={zoom}
@@ -32,21 +32,17 @@ export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOffer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     />
-    {offers.map((offer) => {
-      const icon = offer.id === activeOfferId ? activeIcon : defaultIcon;
-
-      return (
-        <Marker
-          key={offer.id}
-          position={[offer.location.latitude, offer.location.longitude]}
-          icon={icon}
-        >
-          <Popup>
-            {offer.title}
-          </Popup>
-        </Marker>
-      );
-    })}
+    {offers.map((offer) => (
+      <Marker
+        key={offer.id}
+        position={[offer.location.latitude, offer.location.longitude]}
+        icon={offer.id === activeOfferId ? activeIcon : defaultIcon}
+      >
+        <Popup>
+          {offer.title}
+        </Popup>
+      </Marker>
+    ))}
   </MapContainer>
 );
 
