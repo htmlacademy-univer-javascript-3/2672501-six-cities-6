@@ -21,5 +21,3 @@ export const offersReducer = (state: State = initialState, action: Action): Stat
       return state;
   }
 };
-
-

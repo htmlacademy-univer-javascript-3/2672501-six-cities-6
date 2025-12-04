@@ -11,5 +11,3 @@ export const store = configureStore<{ offers: State }, Action>({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-

@@ -15,5 +15,3 @@ export const getCityOffers = (state: RootState): Offer[] => {
 
   return offers.filter((offer) => offer.city === city);
 };
-
-
