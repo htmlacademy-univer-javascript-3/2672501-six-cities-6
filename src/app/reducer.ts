@@ -26,8 +26,18 @@ export const offersReducer = (state: State = initialState, action: Action | Retu
       return { ...state, isLoading: true, error: null };
     case fetchOffersAction.fulfilled.type:
       return { ...state, isLoading: false, offers: action.payload };
-    case fetchOffersAction.rejected.type:
-      return { ...state, isLoading: false, error: action.error.message || 'Failed to load offers' };
+    case fetchOffersAction.rejected.type: {
+      let errorMessage = 'Failed to load offers';
+      if (action.payload) {
+        errorMessage = action.payload;
+      } else if (action.error && typeof action.error === 'object' && 'message' in action.error) {
+        const errorObj = action.error as { message?: unknown };
+        if (typeof errorObj.message === 'string') {
+          errorMessage = errorObj.message;
+        }
+      }
+      return { ...state, isLoading: false, error: errorMessage };
+    }
     default:
       return state;
   }

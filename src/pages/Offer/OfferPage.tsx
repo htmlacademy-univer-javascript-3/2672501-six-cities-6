@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Offer } from '../../types/offer';
 import { ReviewForm } from '../../shared/components/ReviewForm';
 import { ReviewsList } from '../../shared/components/ReviewsList';
 import { Map } from '../../shared/components/Map';
