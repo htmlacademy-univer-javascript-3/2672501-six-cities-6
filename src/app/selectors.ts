@@ -20,4 +20,3 @@ export const getCityOffers = createSelector(
 export const getIsLoading = (state: RootState): boolean => state.offers.isLoading;
 
 export const getError = (state: RootState): string | null => state.offers.error;
-

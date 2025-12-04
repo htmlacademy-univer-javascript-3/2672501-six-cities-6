@@ -42,4 +42,3 @@ export const offersReducer = (state: State = initialState, action: Action | Retu
       return state;
   }
 };
-

@@ -7,6 +7,7 @@ interface MapProps {
   offers: Offer[];
   center: [number, number];
   zoom?: number;
+  activeOfferId?: string | null;
 }
 
 const defaultIcon = new Icon({
@@ -15,7 +16,13 @@ const defaultIcon = new Icon({
   iconAnchor: [13.5, 39]
 });
 
-export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12 }) => (
+const activeIcon = new Icon({
+  iconUrl: 'img/pin-active.svg',
+  iconSize: [27, 39],
+  iconAnchor: [13.5, 39]
+});
+
+export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOfferId = null }) => (
   <MapContainer
     center={center}
     zoom={zoom}
@@ -29,7 +36,7 @@ export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12 }) => (
       <Marker
         key={offer.id}
         position={[offer.location.latitude, offer.location.longitude]}
-        icon={defaultIcon}
+        icon={offer.id === activeOfferId ? activeIcon : defaultIcon}
       >
         <Popup>
           {offer.title}
