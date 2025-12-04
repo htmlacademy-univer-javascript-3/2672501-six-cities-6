@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { App } from './App';
-import { store } from './store';
+import { store, AppDispatch } from './store';
 import { setCity } from './app/action';
 import { fetchOffersAction } from './services/api-actions';
 import 'leaflet/dist/leaflet.css';
 
-store.dispatch(setCity('Paris'));
-store.dispatch(fetchOffersAction());
+const dispatch: AppDispatch = store.dispatch;
+dispatch(setCity('Paris'));
+dispatch(fetchOffersAction());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

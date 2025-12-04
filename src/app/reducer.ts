@@ -16,21 +16,36 @@ const initialState: State = {
   error: null
 };
 
-export const offersReducer = (state: State = initialState, action: Action | ReturnType<typeof fetchOffersAction.pending> | ReturnType<typeof fetchOffersAction.fulfilled> | ReturnType<typeof fetchOffersAction.rejected>): State => {
+type OffersAction =
+  | Action
+  | ReturnType<typeof fetchOffersAction.pending>
+  | ReturnType<typeof fetchOffersAction.fulfilled>
+  | ReturnType<typeof fetchOffersAction.rejected>;
+
+export const offersReducer = (state: State = initialState, action: OffersAction | { type: string }): State => {
   switch (action.type) {
     case 'SET_CITY':
-      return { ...state, city: action.payload };
+      if ('payload' in action && typeof action.payload === 'string') {
+        return { ...state, city: action.payload };
+      }
+      return state;
     case 'SET_OFFERS':
-      return { ...state, offers: action.payload };
+      if ('payload' in action && Array.isArray(action.payload)) {
+        return { ...state, offers: action.payload };
+      }
+      return state;
     case fetchOffersAction.pending.type:
       return { ...state, isLoading: true, error: null };
     case fetchOffersAction.fulfilled.type:
-      return { ...state, isLoading: false, offers: action.payload };
+      if ('payload' in action && Array.isArray(action.payload)) {
+        return { ...state, isLoading: false, offers: action.payload };
+      }
+      return { ...state, isLoading: false };
     case fetchOffersAction.rejected.type: {
       let errorMessage = 'Failed to load offers';
-      if (action.payload) {
+      if ('payload' in action && typeof action.payload === 'string') {
         errorMessage = action.payload;
-      } else if (action.error && typeof action.error === 'object' && 'message' in action.error) {
+      } else if ('error' in action && action.error && typeof action.error === 'object' && 'message' in action.error) {
         const errorObj = action.error as { message?: unknown };
         if (typeof errorObj.message === 'string') {
           errorMessage = errorObj.message;
