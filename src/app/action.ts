@@ -23,4 +23,3 @@ export const setOffers = (offersList: Offer[]): SetOffersAction => ({
   type: 'SET_OFFERS',
   payload: offersList
 });
-
