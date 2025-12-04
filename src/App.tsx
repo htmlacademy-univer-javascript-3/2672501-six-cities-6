@@ -15,7 +15,7 @@ export const App: React.FC = () => (
       <Route
         path="/favorites"
         element={
-          <PrivateRoute isAuthenticated={false}>
+          <PrivateRoute>
             <FavoritesPage />
           </PrivateRoute>
         }

@@ -4,11 +4,12 @@ import { Provider } from 'react-redux';
 import { App } from './App';
 import { store, AppDispatch } from './store';
 import { setCity } from './app/action';
-import { fetchOffersAction } from './services/api-actions';
+import { fetchOffersAction, checkAuthAction } from './services/api-actions';
 import 'leaflet/dist/leaflet.css';
 
 const dispatch: AppDispatch = store.dispatch;
 dispatch(setCity('Paris'));
+dispatch(checkAuthAction());
 dispatch(fetchOffersAction());
 
 const root = ReactDOM.createRoot(

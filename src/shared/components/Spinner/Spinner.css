@@ -1,8 +1,9 @@
 /* From Uiverse.io by rillala */
 .spinner {
-  position: absolute;
+  position: relative;
   width: 25px;
   height: 40px;
+  margin: 0 auto;
 }
 
 .spinner div {
