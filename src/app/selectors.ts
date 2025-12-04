@@ -1,6 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { Offer } from '../types/offer';
+import { AuthorizationStatus } from './reducer';
+import { AuthInfo } from '../types/auth';
 
 export const getOffers = (state: RootState): Offer[] => state.offers.offers;
 
@@ -19,4 +21,7 @@ export const getCityOffers = createSelector(
 
 export const getIsLoading = (state: RootState): boolean => state.offers.isLoading;
 
-export const getError = (state: RootState): string | null => state.offers.error;
+export const getAuthorizationStatus = (state: RootState): AuthorizationStatus => state.offers.authorizationStatus;
+
+export const getUser = (state: RootState): AuthInfo | null => state.offers.user;
+

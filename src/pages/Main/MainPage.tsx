@@ -5,8 +5,9 @@ import { OffersList } from '../../shared/components/OffersList';
 import { Map } from '../../shared/components/Map';
 import { CitiesList } from '../../shared/components/CitiesList';
 import { Spinner } from '../../shared/components/Spinner';
-import { getCityOffers, getCity, getIsLoading } from '../../app/selectors';
-import { setCity } from '../../app/action';
+import { getCityOffers, getCity, getIsLoading, getAuthorizationStatus, getUser } from '../../app/selectors';
+import { setCity, setAuthorizationStatus } from '../../app/action';
+import { TOKEN_KEY } from '../../services/api';
 const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
 export const MainPage: React.FC = () => {
@@ -14,6 +15,8 @@ export const MainPage: React.FC = () => {
   const cityOffers = useSelector(getCityOffers);
   const activeCity = useSelector(getCity);
   const isLoading = useSelector(getIsLoading);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const user = useSelector(getUser);
   const [, setActiveCardId] = useState<string | null>(null);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [currentSort, setCurrentSort] = useState('Popular');
@@ -29,6 +32,13 @@ export const MainPage: React.FC = () => {
   const handleCityClick = (city: string) => {
     dispatch(setCity(city));
   };
+
+  const handleSignOut = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    dispatch(setAuthorizationStatus('NO_AUTH'));
+  };
+
+  const favoriteCount = cityOffers.filter((offer) => offer.isFavorite).length;
 
   const handleSortMenuToggle = () => {
     setIsSortMenuOpen(!isSortMenuOpen);
@@ -70,19 +80,30 @@ export const MainPage: React.FC = () => {
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <Link className="header__nav-link header__nav-link--profile" to="/favorites">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                    <span className="header__favorite-count">3</span>
-                  </Link>
-                </li>
-                <li className="header__nav-item">
-                  <Link className="header__nav-link" to="/login">
-                    <span className="header__signout">Sign out</span>
-                  </Link>
-                </li>
+                {authorizationStatus === 'AUTH' && user ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link className="header__nav-link header__nav-link--profile" to="/favorites">
+                        <div className="header__avatar-wrapper user__avatar-wrapper">
+                          <img className="header__avatar user__avatar" src={user.avatarUrl} alt={user.name} />
+                        </div>
+                        <span className="header__user-name user__name">{user.email}</span>
+                        <span className="header__favorite-count">{favoriteCount}</span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <Link className="header__nav-link" to="/" onClick={handleSignOut}>
+                        <span className="header__signout">Sign out</span>
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item">
+                    <Link className="header__nav-link" to="/login">
+                      <span className="header__login">Sign in</span>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
@@ -102,7 +123,7 @@ export const MainPage: React.FC = () => {
                 <>
                   <b className="places__found">{cityOffers.length} places to stay in {activeCity}</b>
                   <form className="places__sorting" action="#" method="get">
-                    <span className="places__sorting-caption" style={{ marginRight: '8px' }}>Sort by</span>
+                    <span className="places__sorting-caption">Sort by</span>
                     <span
                       className="places__sorting-type"
                       tabIndex={0}
