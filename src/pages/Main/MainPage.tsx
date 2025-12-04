@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { OffersList } from '../../shared/components/OffersList';
@@ -24,14 +24,12 @@ export const MainPage: React.FC = () => {
     setActiveCardId(null);
   };
 
-  const handleSortMenuToggle = () => {
-    setIsSortMenuOpen(!isSortMenuOpen);
+  const handleCityClick = (city: string) => {
+    dispatch(setCity(city));
   };
 
-  const handleSortOptionClick = (sortType: string) => {
-    setCurrentSort(sortType);
-    setIsSortMenuOpen(false);
-  };
+  const sortedOffers = useMemo(() => {
+    const offersCopy = [...cityOffers];
 
   const handleCityClick = (city: string) => {
     dispatch(setCity(city));
