@@ -1,17 +1,14 @@
 import React from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
-import { Offer } from '../../mocks/offers';
-import { reviews } from '../../mocks/reviews';
+import { useSelector } from 'react-redux';
 import { ReviewForm } from '../../shared/components/ReviewForm';
 import { ReviewsList } from '../../shared/components/ReviewsList';
 import { Map } from '../../shared/components/Map';
 import { OffersList } from '../../shared/components/OffersList';
+import { getOffers } from '../../app/selectors';
 
-interface OfferPageProps {
-  offers: Offer[];
-}
-
-export const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
+export const OfferPage: React.FC = () => {
+  const offers = useSelector(getOffers);
   const { id } = useParams<{ id: string }>();
   const offer = offers.find((o) => o.id === id);
 
@@ -20,7 +17,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
   }
 
   const nearbyOffers = offers
-    .filter((o) => o.id !== offer.id && o.city === offer.city)
+    .filter((o) => o.id !== offer.id && o.city.name === offer.city.name)
     .slice(0, 3);
 
   const mapCenter: [number, number] = [
@@ -63,7 +60,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {offer.images.map((image) => (
+              {offer.images?.map((image) => (
                 <div key={image} className="offer__image-wrapper">
                   <img className="offer__image" src={image} alt="Place photo" />
                 </div>
@@ -99,46 +96,56 @@ export const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
                 <li className="offer__feature offer__feature--entire">
                   {offer.type}
                 </li>
-                <li className="offer__feature offer__feature--bedrooms">
-                  {offer.bedrooms} Bedroom{offer.bedrooms > 1 ? 's' : ''}
-                </li>
-                <li className="offer__feature offer__feature--adults">
-                  Max {offer.maxAdults} adult{offer.maxAdults > 1 ? 's' : ''}
-                </li>
+                {offer.bedrooms !== undefined && (
+                  <li className="offer__feature offer__feature--bedrooms">
+                    {offer.bedrooms} Bedroom{offer.bedrooms > 1 ? 's' : ''}
+                  </li>
+                )}
+                {offer.maxAdults !== undefined && (
+                  <li className="offer__feature offer__feature--adults">
+                    Max {offer.maxAdults} adult{offer.maxAdults > 1 ? 's' : ''}
+                  </li>
+                )}
               </ul>
               <div className="offer__price">
                 <b className="offer__price-value">€{offer.price}</b>
                 <span className="offer__price-text">&nbsp;night</span>
               </div>
-              <div className="offer__inside">
-                <h2 className="offer__inside-title">What&apos;s inside</h2>
-                <ul className="offer__inside-list">
-                  {offer.goods.map((good) => (
-                    <li key={good} className="offer__inside-item">{good}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="offer__host">
-                <h2 className="offer__host-title">Meet the host</h2>
-                <div className="offer__host-user user">
-                  <div className={`offer__avatar-wrapper user__avatar-wrapper ${offer.host.isPro ? 'offer__avatar-wrapper--pro' : ''}`}>
-                    <img className="offer__avatar user__avatar" src={offer.host.avatarUrl} width="74" height="74" alt="Host avatar" />
+              {offer.goods && offer.goods.length > 0 && (
+                <div className="offer__inside">
+                  <h2 className="offer__inside-title">What&apos;s inside</h2>
+                  <ul className="offer__inside-list">
+                    {offer.goods.map((good) => (
+                      <li key={good} className="offer__inside-item">{good}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {offer.host && (
+                <div className="offer__host">
+                  <h2 className="offer__host-title">Meet the host</h2>
+                  <div className="offer__host-user user">
+                    <div className={`offer__avatar-wrapper user__avatar-wrapper ${offer.host.isPro ? 'offer__avatar-wrapper--pro' : ''}`}>
+                      <img className="offer__avatar user__avatar" src={offer.host.avatarUrl} width="74" height="74" alt="Host avatar" />
+                    </div>
+                    <span className="offer__user-name">{offer.host.name}</span>
+                    {offer.host.isPro && (
+                      <span className="offer__user-status">Pro</span>
+                    )}
                   </div>
-                  <span className="offer__user-name">{offer.host.name}</span>
-                  {offer.host.isPro && (
-                    <span className="offer__user-status">Pro</span>
+                  {offer.description && (
+                    <div className="offer__description">
+                      {offer.description.split('\n').filter((paragraph) => paragraph.trim()).map((paragraph) => (
+                        <p key={paragraph.trim()} className="offer__text">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
                   )}
                 </div>
-                <div className="offer__description">
-                  {offer.description.split('\n').filter((paragraph) => paragraph.trim()).map((paragraph) => (
-                    <p key={paragraph.trim()} className="offer__text">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              </div>
+              )}
               <section className="offer__reviews reviews">
-                <ReviewsList reviews={reviews} />
+                <ReviewsList reviews={[]} />
                 <ReviewForm />
               </section>
             </div>

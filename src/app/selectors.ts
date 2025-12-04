@@ -1,17 +1,22 @@
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { Offer } from '../mocks/offers';
+import { Offer } from '../types/offer';
 
 export const getOffers = (state: RootState): Offer[] => state.offers.offers;
 
 export const getCity = (state: RootState): string => state.offers.city;
 
-export const getCityOffers = (state: RootState): Offer[] => {
-  const city = getCity(state);
-  const offers = getOffers(state);
+export const getCityOffers = createSelector(
+  [getOffers, getCity],
+  (offers: Offer[], city: string): Offer[] => {
+    if (!city) {
+      return offers;
+    }
 
-  if (!city) {
-    return offers;
+    return offers.filter((offer) => offer.city.name === city);
   }
+);
 
-  return offers.filter((offer) => offer.city === city);
-};
+export const getIsLoading = (state: RootState): boolean => state.offers.isLoading;
+
+export const getError = (state: RootState): string | null => state.offers.error;
