@@ -28,4 +28,3 @@ export const fillOffers = (): SetOffersAction => ({
   type: 'SET_OFFERS',
   payload: offers
 });
-

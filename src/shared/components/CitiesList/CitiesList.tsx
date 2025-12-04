@@ -34,4 +34,3 @@ export const CitiesList: React.FC<CitiesListProps> = ({ cities, activeCity, onCi
     </div>
   );
 };
-

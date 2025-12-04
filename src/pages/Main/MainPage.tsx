@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { OffersList } from '../../shared/components/OffersList';
 import { Map } from '../../shared/components/Map';
 import { CitiesList } from '../../shared/components/CitiesList';
+import { SortingOptions } from '../../shared/components/SortingOptions';
 import { getCityOffers, getCity } from '../../app/selectors';
 import { setCity } from '../../app/action';
+
 const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
 export const MainPage: React.FC = () => {
   const dispatch = useDispatch();
   const cityOffers = useSelector(getCityOffers);
   const activeCity = useSelector(getCity);
-  const [, setActiveCardId] = useState<string | null>(null);
-  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const [currentSort, setCurrentSort] = useState('Popular');
 
   const handleCardMouseEnter = (id: string) => {
@@ -24,21 +25,28 @@ export const MainPage: React.FC = () => {
     setActiveCardId(null);
   };
 
-  const handleSortMenuToggle = () => {
-    setIsSortMenuOpen(!isSortMenuOpen);
-  };
-
-  const handleSortOptionClick = (sortType: string) => {
-    setCurrentSort(sortType);
-    setIsSortMenuOpen(false);
-  };
-
   const handleCityClick = (city: string) => {
     dispatch(setCity(city));
   };
 
-  const cityCenter: [number, number] = cityOffers.length > 0
-    ? [cityOffers[0].location.latitude, cityOffers[0].location.longitude]
+  const sortedOffers = useMemo(() => {
+    const offersCopy = [...cityOffers];
+
+    switch (currentSort) {
+      case 'Price: low to high':
+        return offersCopy.sort((a, b) => a.price - b.price);
+      case 'Price: high to low':
+        return offersCopy.sort((a, b) => b.price - a.price);
+      case 'Top rated first':
+        return offersCopy.sort((a, b) => b.rating - a.rating);
+      case 'Popular':
+      default:
+        return offersCopy;
+    }
+  }, [cityOffers, currentSort]);
+
+  const cityCenter: [number, number] = sortedOffers.length > 0
+    ? [sortedOffers[0].location.latitude, sortedOffers[0].location.longitude]
     : [52.370216, 4.895168];
 
   return (
@@ -79,59 +87,17 @@ export const MainPage: React.FC = () => {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{cityOffers.length} places to stay in {activeCity}</b>
-              <form className="places__sorting" action="#" method="get">
-                <span className="places__sorting-caption">Sort by</span>
-                <span
-                  className="places__sorting-type"
-                  tabIndex={0}
-                  onClick={handleSortMenuToggle}
-                >
-                  {currentSort}
-                  <svg className="places__sorting-arrow" width="7" height="4">
-                    <use xlinkHref="#icon-arrow-select"></use>
-                  </svg>
-                </span>
-                <ul className={`places__options places__options--custom ${isSortMenuOpen ? 'places__options--opened' : ''}`}>
-                  <li
-                    className={`places__option ${currentSort === 'Popular' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Popular')}
-                  >
-                    Popular
-                  </li>
-                  <li
-                    className={`places__option ${currentSort === 'Price: low to high' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Price: low to high')}
-                  >
-                    Price: low to high
-                  </li>
-                  <li
-                    className={`places__option ${currentSort === 'Price: high to low' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Price: high to low')}
-                  >
-                    Price: high to low
-                  </li>
-                  <li
-                    className={`places__option ${currentSort === 'Top rated first' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Top rated first')}
-                  >
-                    Top rated first
-                  </li>
-                </ul>
-              </form>
+              <b className="places__found">{sortedOffers.length} places to stay in {activeCity}</b>
+              <SortingOptions currentSort={currentSort} onSortChange={setCurrentSort} />
               <OffersList
-                offers={cityOffers}
+                offers={sortedOffers}
                 onMouseEnter={handleCardMouseEnter}
                 onMouseLeave={handleCardMouseLeave}
               />
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                <Map offers={cityOffers} center={cityCenter} />
+                <Map offers={sortedOffers} center={cityCenter} activeOfferId={activeCardId} />
               </section>
             </div>
           </div>
