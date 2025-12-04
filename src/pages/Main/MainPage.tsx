@@ -31,7 +31,7 @@ export const MainPage: React.FC = () => {
 
   const sortedOffers = useMemo(() => {
     const offersCopy = [...cityOffers];
-    
+
     switch (currentSort) {
       case 'Price: low to high':
         return offersCopy.sort((a, b) => a.price - b.price);
