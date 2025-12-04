@@ -28,12 +28,29 @@ export const MainPage: React.FC = () => {
     dispatch(setCity(city));
   };
 
+  const handleSortMenuToggle = () => {
+    setIsSortMenuOpen(!isSortMenuOpen);
+  };
+
+  const handleSortOptionClick = (sortOption: string) => {
+    setCurrentSort(sortOption);
+    setIsSortMenuOpen(false);
+  };
+
   const sortedOffers = useMemo(() => {
     const offersCopy = [...cityOffers];
 
-  const handleCityClick = (city: string) => {
-    dispatch(setCity(city));
-  };
+    switch (currentSort) {
+      case 'Price: low to high':
+        return offersCopy.sort((a, b) => a.price - b.price);
+      case 'Price: high to low':
+        return offersCopy.sort((a, b) => b.price - a.price);
+      case 'Top rated first':
+        return offersCopy.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      default:
+        return offersCopy;
+    }
+  }, [cityOffers, currentSort]);
 
   const cityCenter: [number, number] = cityOffers.length > 0
     ? [cityOffers[0].location.latitude, cityOffers[0].location.longitude]
@@ -122,7 +139,7 @@ export const MainPage: React.FC = () => {
                 </ul>
               </form>
               <OffersList
-                offers={cityOffers}
+                offers={sortedOffers}
                 onMouseEnter={handleCardMouseEnter}
                 onMouseLeave={handleCardMouseLeave}
               />
