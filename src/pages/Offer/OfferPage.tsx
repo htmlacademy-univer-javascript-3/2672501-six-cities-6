@@ -1,17 +1,15 @@
 import React from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
-import { Offer } from '../../mocks/offers';
-import { reviews } from '../../mocks/reviews';
+import { useSelector } from 'react-redux';
+import { Offer } from '../../types/offer';
 import { ReviewForm } from '../../shared/components/ReviewForm';
 import { ReviewsList } from '../../shared/components/ReviewsList';
 import { Map } from '../../shared/components/Map';
 import { OffersList } from '../../shared/components/OffersList';
+import { getOffers } from '../../app/selectors';
 
-interface OfferPageProps {
-  offers: Offer[];
-}
-
-export const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
+export const OfferPage: React.FC = () => {
+  const offers = useSelector(getOffers);
   const { id } = useParams<{ id: string }>();
   const offer = offers.find((o) => o.id === id);
 
@@ -20,7 +18,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
   }
 
   const nearbyOffers = offers
-    .filter((o) => o.id !== offer.id && o.city === offer.city)
+    .filter((o) => o.id !== offer.id && o.city.name === offer.city.name)
     .slice(0, 3);
 
   const mapCenter: [number, number] = [
@@ -138,7 +136,7 @@ export const OfferPage: React.FC<OfferPageProps> = ({ offers }) => {
                 </div>
               </div>
               <section className="offer__reviews reviews">
-                <ReviewsList reviews={reviews} />
+                <ReviewsList reviews={[]} />
                 <ReviewForm />
               </section>
             </div>

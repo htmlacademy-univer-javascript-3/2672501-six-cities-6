@@ -1,22 +1,22 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { FavoriteCard } from '../../shared/components/FavoriteCard';
-import { Offer } from '../../mocks/offers';
+import { Offer } from '../../types/offer';
+import { getOffers } from '../../app/selectors';
 
-interface FavoritesPageProps {
-  offers: Offer[];
-}
-
-export const FavoritesPage: React.FC<FavoritesPageProps> = ({ offers }) => {
+export const FavoritesPage: React.FC = () => {
+  const offers = useSelector(getOffers);
   const favoriteOffersByCity = useMemo(() => {
     const favoriteOffers = offers.filter((offer) => offer.isFavorite);
     const groupedByCity: Record<string, Offer[]> = {};
 
     favoriteOffers.forEach((offer) => {
-      if (!groupedByCity[offer.city]) {
-        groupedByCity[offer.city] = [];
+      const cityName = offer.city.name;
+      if (!groupedByCity[cityName]) {
+        groupedByCity[cityName] = [];
       }
-      groupedByCity[offer.city].push(offer);
+      groupedByCity[cityName].push(offer);
     });
 
     return groupedByCity;

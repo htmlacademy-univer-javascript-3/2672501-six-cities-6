@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Offer } from '../../../mocks/offers';
+import { Offer } from '../../../types/offer';
 
 interface FavoriteCardProps {
   offer: Offer;
@@ -22,7 +22,7 @@ export const FavoriteCard: React.FC<FavoriteCardProps> = ({ offer }) => {
         <Link to={`/offer/${offer.id}`}>
           <img
             className="place-card__image"
-            src={offer.image}
+            src={offer.previewImage}
             width="150"
             height="110"
             alt="Place image"
@@ -48,7 +48,7 @@ export const FavoriteCard: React.FC<FavoriteCardProps> = ({ offer }) => {
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{width: `${offer.rating}%`}}></span>
+            <span style={{width: `${(offer.rating / 5) * 100}%`}}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>

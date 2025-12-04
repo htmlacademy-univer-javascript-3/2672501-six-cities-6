@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Offer } from '../../../mocks/offers';
+import { Offer } from '../../../types/offer';
 
 interface PlaceCardProps {
   offer: Offer;
@@ -48,7 +48,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
         <Link to={`/offer/${offer.id}`}>
           <img
             className="place-card__image"
-            src={offer.image}
+            src={offer.previewImage}
             width="260"
             height="200"
             alt="Place image"
@@ -76,7 +76,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
         </div>
         <div className="place-card__rating rating">
           <div className="place-card__stars rating__stars">
-            <span style={{width: `${offer.rating}%`}}></span>
+            <span style={{width: `${(offer.rating / 5) * 100}%`}}></span>
             <span className="visually-hidden">Rating</span>
           </div>
         </div>

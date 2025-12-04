@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { OffersList } from '../../shared/components/OffersList';
 import { Map } from '../../shared/components/Map';
 import { CitiesList } from '../../shared/components/CitiesList';
-import { getCityOffers, getCity } from '../../app/selectors';
+import { Spinner } from '../../shared/components/Spinner';
+import { getCityOffers, getCity, getIsLoading } from '../../app/selectors';
 import { setCity } from '../../app/action';
 const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
@@ -12,6 +13,7 @@ export const MainPage: React.FC = () => {
   const dispatch = useDispatch();
   const cityOffers = useSelector(getCityOffers);
   const activeCity = useSelector(getCity);
+  const isLoading = useSelector(getIsLoading);
   const [, setActiveCardId] = useState<string | null>(null);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [currentSort, setCurrentSort] = useState('Popular');
@@ -77,57 +79,63 @@ export const MainPage: React.FC = () => {
         <CitiesList cities={CITIES} activeCity={activeCity} onCityClick={handleCityClick} />
         <div className="cities">
           <div className="cities__places-container container">
-            <section className="cities__places places">
+            <section className="cities__places places" style={isLoading ? { display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 180px)' } : undefined}>
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{cityOffers.length} places to stay in {activeCity}</b>
-              <form className="places__sorting" action="#" method="get">
-                <span className="places__sorting-caption">Sort by</span>
-                <span
-                  className="places__sorting-type"
-                  tabIndex={0}
-                  onClick={handleSortMenuToggle}
-                >
-                  {currentSort}
-                  <svg className="places__sorting-arrow" width="7" height="4">
-                    <use xlinkHref="#icon-arrow-select"></use>
-                  </svg>
-                </span>
-                <ul className={`places__options places__options--custom ${isSortMenuOpen ? 'places__options--opened' : ''}`}>
-                  <li
-                    className={`places__option ${currentSort === 'Popular' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Popular')}
-                  >
-                    Popular
-                  </li>
-                  <li
-                    className={`places__option ${currentSort === 'Price: low to high' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Price: low to high')}
-                  >
-                    Price: low to high
-                  </li>
-                  <li
-                    className={`places__option ${currentSort === 'Price: high to low' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Price: high to low')}
-                  >
-                    Price: high to low
-                  </li>
-                  <li
-                    className={`places__option ${currentSort === 'Top rated first' ? 'places__option--active' : ''}`}
-                    tabIndex={0}
-                    onClick={() => handleSortOptionClick('Top rated first')}
-                  >
-                    Top rated first
-                  </li>
-                </ul>
-              </form>
-              <OffersList
-                offers={cityOffers}
-                onMouseEnter={handleCardMouseEnter}
-                onMouseLeave={handleCardMouseLeave}
-              />
+              {isLoading ? (
+                <Spinner />
+              ) : (
+                <>
+                  <b className="places__found">{cityOffers.length} places to stay in {activeCity}</b>
+                  <form className="places__sorting" action="#" method="get">
+                    <span className="places__sorting-caption" style={{ marginRight: '8px' }}>Sort by</span>
+                    <span
+                      className="places__sorting-type"
+                      tabIndex={0}
+                      onClick={handleSortMenuToggle}
+                    >
+                      {currentSort}
+                      <svg className="places__sorting-arrow" width="7" height="4">
+                        <use xlinkHref="#icon-arrow-select"></use>
+                      </svg>
+                    </span>
+                    <ul className={`places__options places__options--custom ${isSortMenuOpen ? 'places__options--opened' : ''}`}>
+                      <li
+                        className={`places__option ${currentSort === 'Popular' ? 'places__option--active' : ''}`}
+                        tabIndex={0}
+                        onClick={() => handleSortOptionClick('Popular')}
+                      >
+                        Popular
+                      </li>
+                      <li
+                        className={`places__option ${currentSort === 'Price: low to high' ? 'places__option--active' : ''}`}
+                        tabIndex={0}
+                        onClick={() => handleSortOptionClick('Price: low to high')}
+                      >
+                        Price: low to high
+                      </li>
+                      <li
+                        className={`places__option ${currentSort === 'Price: high to low' ? 'places__option--active' : ''}`}
+                        tabIndex={0}
+                        onClick={() => handleSortOptionClick('Price: high to low')}
+                      >
+                        Price: high to low
+                      </li>
+                      <li
+                        className={`places__option ${currentSort === 'Top rated first' ? 'places__option--active' : ''}`}
+                        tabIndex={0}
+                        onClick={() => handleSortOptionClick('Top rated first')}
+                      >
+                        Top rated first
+                      </li>
+                    </ul>
+                  </form>
+                  <OffersList
+                    offers={cityOffers}
+                    onMouseEnter={handleCardMouseEnter}
+                    onMouseLeave={handleCardMouseLeave}
+                  />
+                </>
+              )}
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">

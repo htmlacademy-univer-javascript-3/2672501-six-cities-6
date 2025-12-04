@@ -1,4 +1,4 @@
-import { Offer, offers } from '../mocks/offers';
+import { Offer } from '../types/offer';
 
 export type ActionType = 'SET_CITY' | 'SET_OFFERS';
 
@@ -22,10 +22,5 @@ export const setCity = (city: string): SetCityAction => ({
 export const setOffers = (offersList: Offer[]): SetOffersAction => ({
   type: 'SET_OFFERS',
   payload: offersList
-});
-
-export const fillOffers = (): SetOffersAction => ({
-  type: 'SET_OFFERS',
-  payload: offers
 });
 
