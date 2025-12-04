@@ -1,6 +1,6 @@
 import React from 'react';
 import { PlaceCard } from '../PlaceCard';
-import { Offer } from '../../../mocks/offers';
+import { Offer } from '../../../types/offer';
 
 interface OffersListProps {
   offers: Offer[];

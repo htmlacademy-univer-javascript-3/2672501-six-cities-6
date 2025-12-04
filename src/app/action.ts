@@ -1,4 +1,4 @@
-import { Offer, offers } from '../mocks/offers';
+import { Offer } from '../types/offer';
 
 export type ActionType = 'SET_CITY' | 'SET_OFFERS';
 

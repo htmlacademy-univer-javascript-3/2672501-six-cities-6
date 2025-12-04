@@ -92,7 +92,7 @@ export const MainPage: React.FC = () => {
         <CitiesList cities={CITIES} activeCity={activeCity} onCityClick={handleCityClick} />
         <div className="cities">
           <div className="cities__places-container container">
-            <section className="cities__places places">
+            <section className="cities__places places" style={isLoading ? { display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 180px)' } : undefined}>
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">{cityOffers.length} places to stay in {activeCity}</b>
               <form className="places__sorting" action="#" method="get">
