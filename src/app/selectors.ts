@@ -17,6 +17,3 @@ export const getCityOffers = createSelector(
   }
 );
 
-  return offers.filter((offer) => offer.city === city);
-};
-

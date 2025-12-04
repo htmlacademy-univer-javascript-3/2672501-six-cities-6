@@ -24,8 +24,3 @@ export const setOffers = (offersList: Offer[]): SetOffersAction => ({
   payload: offersList
 });
 
-export const fillOffers = (): SetOffersAction => ({
-  type: 'SET_OFFERS',
-  payload: offers
-});
-
