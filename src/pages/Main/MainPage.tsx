@@ -7,7 +7,6 @@ import { CitiesList } from '../../shared/components/CitiesList';
 import { SortingOptions } from '../../shared/components/SortingOptions';
 import { getCityOffers, getCity } from '../../app/selectors';
 import { setCity } from '../../app/action';
-import { Offer } from '../../mocks/offers';
 
 const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
