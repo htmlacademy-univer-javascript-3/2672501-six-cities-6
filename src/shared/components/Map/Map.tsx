@@ -7,6 +7,7 @@ interface MapProps {
   offers: Offer[];
   center: [number, number];
   zoom?: number;
+  activeOfferId?: string | null;
 }
 
 const defaultIcon = new Icon({
@@ -15,7 +16,13 @@ const defaultIcon = new Icon({
   iconAnchor: [13.5, 39]
 });
 
-export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12 }) => (
+const activeIcon = new Icon({
+  iconUrl: 'img/pin-active.svg',
+  iconSize: [27, 39],
+  iconAnchor: [13.5, 39]
+});
+
+export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOfferId }) => (
   <MapContainer
     center={center}
     zoom={zoom}
@@ -25,17 +32,21 @@ export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12 }) => (
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     />
-    {offers.map((offer) => (
-      <Marker
-        key={offer.id}
-        position={[offer.location.latitude, offer.location.longitude]}
-        icon={defaultIcon}
-      >
-        <Popup>
-          {offer.title}
-        </Popup>
-      </Marker>
-    ))}
+    {offers.map((offer) => {
+      const icon = offer.id === activeOfferId ? activeIcon : defaultIcon;
+
+      return (
+        <Marker
+          key={offer.id}
+          position={[offer.location.latitude, offer.location.longitude]}
+          icon={icon}
+        >
+          <Popup>
+            {offer.title}
+          </Popup>
+        </Marker>
+      );
+    })}
   </MapContainer>
 );
 
