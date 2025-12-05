@@ -1,24 +1,68 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ReviewForm } from '../../shared/components/ReviewForm';
 import { ReviewsList } from '../../shared/components/ReviewsList';
 import { Map } from '../../shared/components/Map';
 import { OffersList } from '../../shared/components/OffersList';
-import { getOffers } from '../../app/selectors';
+import { Spinner } from '../../shared/components/Spinner';
+import {
+  getCurrentOffer,
+  getNearbyOffers,
+  getReviews,
+  getIsLoadingOffer,
+  getOffers,
+  getAuthorizationStatus,
+  getUser
+} from '../../app/selectors';
+import { fetchOfferAction, fetchNearbyOffersAction, fetchReviewsAction } from '../../services/api-actions';
+import { AppDispatch } from '../../store';
 
 export const OfferPage: React.FC = () => {
-  const offers = useSelector(getOffers);
+  const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
-  const offer = offers.find((o) => o.id === id);
+  const offer = useSelector(getCurrentOffer);
+  const nearbyOffers = useSelector(getNearbyOffers);
+  const reviews = useSelector(getReviews);
+  const isLoadingOffer = useSelector(getIsLoadingOffer);
+  const offers = useSelector(getOffers);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const user = useSelector(getUser);
+
+  useEffect(() => {
+    if (id) {
+      void dispatch(fetchOfferAction(id));
+      void dispatch(fetchNearbyOffersAction(id));
+      void dispatch(fetchReviewsAction(id));
+    }
+  }, [id, dispatch]);
+
+  if (isLoadingOffer) {
+    return (
+      <div className="page">
+        <header className="header">
+          <div className="container">
+            <div className="header__wrapper">
+              <div className="header__left">
+                <Link className="header__logo-link" to="/">
+                  <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </header>
+        <main className="page__main page__main--offer">
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 180px)' }}>
+            <Spinner />
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (!offer) {
     return <Navigate to="/404" replace />;
   }
-
-  const nearbyOffers = offers
-    .filter((o) => o.id !== offer.id && o.city.name === offer.city.name)
-    .slice(0, 3);
 
   const mapCenter: [number, number] = [
     offer.location.latitude,
@@ -37,19 +81,31 @@ export const OfferPage: React.FC = () => {
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <Link className="header__nav-link header__nav-link--profile" to="/favorites">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                    <span className="header__favorite-count">{offers.filter((o) => o.isFavorite).length}</span>
-                  </Link>
-                </li>
-                <li className="header__nav-item">
-                  <Link className="header__nav-link" to="/login">
-                    <span className="header__signout">Sign out</span>
-                  </Link>
-                </li>
+                {authorizationStatus === 'AUTH' && user ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link className="header__nav-link header__nav-link--profile" to="/favorites">
+                        <div className="header__avatar-wrapper user__avatar-wrapper">
+                          <img className="user__avatar" src={user.avatarUrl} width="54" height="54" alt="User avatar" />
+                        </div>
+                        <span className="header__user-name user__name">{user.email}</span>
+                        <span className="header__favorite-count">{offers.filter((o) => o.isFavorite).length}</span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <Link className="header__nav-link" to="/login">
+                        <span className="header__signout">Sign out</span>
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item user">
+                    <Link className="header__nav-link header__nav-link--profile" to="/login">
+                      <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                      <span className="header__login">Sign in</span>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
@@ -145,8 +201,10 @@ export const OfferPage: React.FC = () => {
                 </div>
               )}
               <section className="offer__reviews reviews">
-                <ReviewsList reviews={[]} />
-                <ReviewForm />
+                <ReviewsList reviews={reviews} />
+                {authorizationStatus === 'AUTH' && user && offer && (
+                  <ReviewForm offerId={offer.id} />
+                )}
               </section>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { RootState } from '../store';
 import { Offer } from '../types/offer';
 import { AuthorizationStatus } from './reducer';
 import { AuthInfo } from '../types/auth';
+import { Review } from '../types/review';
 
 export const getOffers = (state: RootState): Offer[] => state.offers.offers;
 
@@ -24,4 +25,12 @@ export const getIsLoading = (state: RootState): boolean => state.offers.isLoadin
 export const getAuthorizationStatus = (state: RootState): AuthorizationStatus => state.offers.authorizationStatus;
 
 export const getUser = (state: RootState): AuthInfo | null => state.offers.user;
+
+export const getCurrentOffer = (state: RootState): Offer | null => state.offers.currentOffer;
+
+export const getNearbyOffers = (state: RootState): Offer[] => state.offers.nearbyOffers;
+
+export const getReviews = (state: RootState): Review[] => state.offers.reviews;
+
+export const getIsLoadingOffer = (state: RootState): boolean => state.offers.isLoadingOffer;
 
