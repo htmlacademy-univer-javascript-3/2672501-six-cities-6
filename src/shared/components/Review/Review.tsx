@@ -1,18 +1,8 @@
 import React from 'react';
-
-export interface Review {
-  id: string;
-  user: {
-    name: string;
-    avatarUrl: string;
-  };
-  rating: number;
-  comment: string;
-  date: string;
-}
+import { Review as ReviewType } from '../../../types/review';
 
 interface ReviewProps {
-  review: Review;
+  review: ReviewType;
 }
 
 export const Review: React.FC<ReviewProps> = ({ review }) => {
