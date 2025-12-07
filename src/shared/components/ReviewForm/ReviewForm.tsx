@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { submitReviewAction, fetchReviewsAction } from '../../../services/api-actions';
 import { AppDispatch } from '../../../store';
@@ -14,17 +14,19 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ offerId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRatingChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setRating(e.target.value);
     setError(null);
-  };
+  }, []);
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleCommentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
     setError(null);
-  };
+  }, []);
 
-  const isFormValid = rating !== '' && comment.trim().length >= 50 && comment.trim().length <= 300;
+  const isFormValid = useMemo(() => {
+    return rating !== '' && comment.trim().length >= 50 && comment.trim().length <= 300;
+  }, [rating, comment]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

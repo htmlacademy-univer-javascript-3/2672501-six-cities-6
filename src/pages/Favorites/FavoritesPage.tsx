@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FavoriteCard } from '../../shared/components/FavoriteCard';
 import { Offer } from '../../types/offer';
-import { getOffers } from '../../app/selectors';
+import { getOffers, getFavoriteCount } from '../../app/selectors';
 
 export const FavoritesPage: React.FC = () => {
   const offers = useSelector(getOffers);
@@ -23,7 +23,7 @@ export const FavoritesPage: React.FC = () => {
   }, [offers]);
 
   const cities = Object.keys(favoriteOffersByCity);
-  const favoriteCount = offers.filter((offer) => offer.isFavorite).length;
+  const favoriteCount = useSelector(getFavoriteCount);
 
   return (
     <div className="page">

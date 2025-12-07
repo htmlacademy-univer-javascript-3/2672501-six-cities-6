@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { ReviewForm } from '../../shared/components/ReviewForm';
@@ -11,12 +11,19 @@ import {
   getNearbyOffers,
   getReviews,
   getIsLoadingOffer,
-  getOffers,
+  getFavoriteCount,
   getAuthorizationStatus,
   getUser
 } from '../../app/selectors';
 import { fetchOfferAction, fetchNearbyOffersAction, fetchReviewsAction } from '../../services/api-actions';
 import { AppDispatch } from '../../store';
+
+const LOADING_STYLES: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: 'calc(100vh - 180px)'
+};
 
 export const OfferPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +32,7 @@ export const OfferPage: React.FC = () => {
   const nearbyOffers = useSelector(getNearbyOffers);
   const reviews = useSelector(getReviews);
   const isLoadingOffer = useSelector(getIsLoadingOffer);
-  const offers = useSelector(getOffers);
+  const favoriteCount = useSelector(getFavoriteCount);
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const user = useSelector(getUser);
 
@@ -52,7 +59,7 @@ export const OfferPage: React.FC = () => {
           </div>
         </header>
         <main className="page__main page__main--offer">
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 180px)' }}>
+          <div style={LOADING_STYLES}>
             <Spinner />
           </div>
         </main>
@@ -64,10 +71,10 @@ export const OfferPage: React.FC = () => {
     return <Navigate to="/404" replace />;
   }
 
-  const mapCenter: [number, number] = [
+  const mapCenter: [number, number] = useMemo(() => [
     offer.location.latitude,
     offer.location.longitude
-  ];
+  ], [offer.location.latitude, offer.location.longitude]);
 
   return (
     <div className="page">
@@ -89,7 +96,7 @@ export const OfferPage: React.FC = () => {
                           <img className="user__avatar" src={user.avatarUrl} width="54" height="54" alt="User avatar" />
                         </div>
                         <span className="header__user-name user__name">{user.email}</span>
-                        <span className="header__favorite-count">{offers.filter((o) => o.isFavorite).length}</span>
+                        <span className="header__favorite-count">{favoriteCount}</span>
                       </Link>
                     </li>
                     <li className="header__nav-item">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Offer } from '../../../types/offer';
 
@@ -10,28 +10,24 @@ interface PlaceCardProps {
   imageWrapperClassName?: string;
 }
 
-const PlaceCard: React.FC<PlaceCardProps> = ({
+const PlaceCardComponent: React.FC<PlaceCardProps> = ({
   offer,
   onMouseEnter,
   onMouseLeave,
   cardClassName = 'cities__card place-card',
   imageWrapperClassName = 'cities__image-wrapper place-card__image-wrapper'
 }) => {
-  const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleBookmarkClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-  };
+  }, []);
 
-  const handleMouseEnter = () => {
-    if (onMouseEnter) {
-      onMouseEnter(offer.id);
-    }
-  };
+  const handleMouseEnter = useCallback(() => {
+    onMouseEnter?.(offer.id);
+  }, [offer.id, onMouseEnter]);
 
-  const handleMouseLeave = () => {
-    if (onMouseLeave) {
-      onMouseLeave();
-    }
-  };
+  const handleMouseLeave = useCallback(() => {
+    onMouseLeave?.();
+  }, [onMouseLeave]);
 
   return (
     <article
@@ -89,4 +85,5 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
   );
 };
 
-export { PlaceCard };
+export const PlaceCard = React.memo(PlaceCardComponent);
+PlaceCard.displayName = 'PlaceCard';

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 interface CitiesListProps {
   cities: string[];
@@ -6,13 +6,11 @@ interface CitiesListProps {
   onCityClick?: (city: string) => void;
 }
 
-export const CitiesList: React.FC<CitiesListProps> = ({ cities, activeCity, onCityClick }) => {
-  const handleCityClick = (e: React.MouseEvent<HTMLAnchorElement>, city: string) => {
+const CitiesListComponent: React.FC<CitiesListProps> = ({ cities, activeCity, onCityClick }) => {
+  const handleCityClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, city: string) => {
     e.preventDefault();
-    if (onCityClick) {
-      onCityClick(city);
-    }
-  };
+    onCityClick?.(city);
+  }, [onCityClick]);
 
   return (
     <div className="tabs">
@@ -34,4 +32,7 @@ export const CitiesList: React.FC<CitiesListProps> = ({ cities, activeCity, onCi
     </div>
   );
 };
+
+export const CitiesList = React.memo(CitiesListComponent);
+CitiesList.displayName = 'CitiesList';
 

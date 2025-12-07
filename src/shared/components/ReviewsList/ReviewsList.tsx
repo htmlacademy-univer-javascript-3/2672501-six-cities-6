@@ -6,7 +6,7 @@ interface ReviewsListProps {
   reviews: ReviewType[];
 }
 
-export const ReviewsList: React.FC<ReviewsListProps> = ({ reviews }) => (
+const ReviewsListComponent: React.FC<ReviewsListProps> = ({ reviews }) => (
   <>
     <h2 className="reviews__title">
       Reviews &middot; <span className="reviews__amount">{reviews.length}</span>
@@ -18,4 +18,7 @@ export const ReviewsList: React.FC<ReviewsListProps> = ({ reviews }) => (
     </ul>
   </>
 );
+
+export const ReviewsList = React.memo(ReviewsListComponent);
+ReviewsList.displayName = 'ReviewsList';
 
