@@ -1,14 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { OffersList } from '../../shared/components/OffersList';
 import { Map } from '../../shared/components/Map';
 import { CitiesList } from '../../shared/components/CitiesList';
 import { Spinner } from '../../shared/components/Spinner';
-import { getCityOffers, getCity, getIsLoading, getAuthorizationStatus, getUser } from '../../app/selectors';
+import { getCityOffers, getCity, getIsLoading, getAuthorizationStatus, getUser, getFavoriteCount } from '../../app/selectors';
 import { setCity, setAuthorizationStatus } from '../../app/action';
 import { TOKEN_KEY } from '../../services/api';
 const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+
+const LOADING_STYLES: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: 'calc(100vh - 180px)'
+};
 
 export const MainPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,37 +24,36 @@ export const MainPage: React.FC = () => {
   const isLoading = useSelector(getIsLoading);
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const user = useSelector(getUser);
-  const [, setActiveCardId] = useState<string | null>(null);
+  const favoriteCount = useSelector(getFavoriteCount);
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [currentSort, setCurrentSort] = useState('Popular');
 
-  const handleCardMouseEnter = (id: string) => {
+  const handleCardMouseEnter = useCallback((id: string) => {
     setActiveCardId(id);
-  };
+  }, []);
 
-  const handleCardMouseLeave = () => {
+  const handleCardMouseLeave = useCallback(() => {
     setActiveCardId(null);
-  };
+  }, []);
 
-  const handleCityClick = (city: string) => {
+  const handleCityClick = useCallback((city: string) => {
     dispatch(setCity(city));
-  };
+  }, [dispatch]);
 
-  const handleSignOut = () => {
+  const handleSignOut = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
     dispatch(setAuthorizationStatus('NO_AUTH'));
-  };
+  }, [dispatch]);
 
-  const favoriteCount = cityOffers.filter((offer) => offer.isFavorite).length;
+  const handleSortMenuToggle = useCallback(() => {
+    setIsSortMenuOpen((prev) => !prev);
+  }, []);
 
-  const handleSortMenuToggle = () => {
-    setIsSortMenuOpen(!isSortMenuOpen);
-  };
-
-  const handleSortOptionClick = (sortOption: string) => {
+  const handleSortOptionClick = useCallback((sortOption: string) => {
     setCurrentSort(sortOption);
     setIsSortMenuOpen(false);
-  };
+  }, []);
 
   const sortedOffers = useMemo(() => {
     const offersCopy = [...cityOffers];
@@ -64,9 +70,11 @@ export const MainPage: React.FC = () => {
     }
   }, [cityOffers, currentSort]);
 
-  const cityCenter: [number, number] = cityOffers.length > 0
-    ? [cityOffers[0].location.latitude, cityOffers[0].location.longitude]
-    : [52.370216, 4.895168];
+  const cityCenter: [number, number] = useMemo(() => {
+    return cityOffers.length > 0
+      ? [cityOffers[0].location.latitude, cityOffers[0].location.longitude]
+      : [52.370216, 4.895168];
+  }, [cityOffers]);
 
   return (
     <div className="page page--gray page--main">
@@ -115,7 +123,7 @@ export const MainPage: React.FC = () => {
         <CitiesList cities={CITIES} activeCity={activeCity} onCityClick={handleCityClick} />
         <div className="cities">
           <div className="cities__places-container container">
-            <section className="cities__places places" style={isLoading ? { display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 180px)' } : undefined}>
+            <section className="cities__places places" style={isLoading ? LOADING_STYLES : undefined}>
               <h2 className="visually-hidden">Places</h2>
               {isLoading ? (
                 <Spinner />
@@ -175,7 +183,7 @@ export const MainPage: React.FC = () => {
             </section>
             <div className="cities__right-section">
               <section className="cities__map map">
-                <Map offers={cityOffers} center={cityCenter} />
+                <Map offers={cityOffers} center={cityCenter} activeOfferId={activeCardId} />
               </section>
             </div>
           </div>

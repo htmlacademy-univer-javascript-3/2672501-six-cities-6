@@ -1,37 +1,7 @@
-import { Offer } from '../types/offer';
-import { AuthorizationStatus } from './reducer';
+import { createAction } from '@reduxjs/toolkit';
+import { AuthorizationStatus } from './slices/auth-slice';
 
-export type ActionType = 'SET_CITY' | 'SET_OFFERS' | 'SET_AUTHORIZATION_STATUS';
+export const setCity = createAction<string>('SET_CITY');
 
-export interface SetCityAction {
-  type: 'SET_CITY';
-  payload: string;
-}
-
-export interface SetOffersAction {
-  type: 'SET_OFFERS';
-  payload: Offer[];
-}
-
-export interface SetAuthorizationStatusAction {
-  type: 'SET_AUTHORIZATION_STATUS';
-  payload: AuthorizationStatus;
-}
-
-export type Action = SetCityAction | SetOffersAction | SetAuthorizationStatusAction;
-
-export const setCity = (city: string): SetCityAction => ({
-  type: 'SET_CITY',
-  payload: city
-});
-
-export const setOffers = (offersList: Offer[]): SetOffersAction => ({
-  type: 'SET_OFFERS',
-  payload: offersList
-});
-
-export const setAuthorizationStatus = (status: AuthorizationStatus): SetAuthorizationStatusAction => ({
-  type: 'SET_AUTHORIZATION_STATUS',
-  payload: status
-});
+export const setAuthorizationStatus = createAction<AuthorizationStatus>('SET_AUTHORIZATION_STATUS');
 

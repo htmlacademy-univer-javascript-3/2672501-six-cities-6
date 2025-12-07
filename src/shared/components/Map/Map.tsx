@@ -22,11 +22,16 @@ const activeIcon = new Icon({
   iconAnchor: [13.5, 39]
 });
 
-export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOfferId = null }) => (
+const MAP_STYLES: React.CSSProperties = {
+  height: '100%',
+  width: '100%'
+};
+
+const MapComponent: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOfferId = null }) => (
   <MapContainer
     center={center}
     zoom={zoom}
-    style={{ height: '100%', width: '100%' }}
+    style={MAP_STYLES}
   >
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -45,4 +50,7 @@ export const Map: React.FC<MapProps> = ({ offers, center, zoom = 12, activeOffer
     ))}
   </MapContainer>
 );
+
+export const Map = React.memo(MapComponent);
+Map.displayName = 'Map';
 

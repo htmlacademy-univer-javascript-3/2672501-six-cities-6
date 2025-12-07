@@ -11,7 +11,7 @@ interface OffersListProps {
   imageWrapperClassName?: string;
 }
 
-export const OffersList: React.FC<OffersListProps> = ({
+const OffersListComponent: React.FC<OffersListProps> = ({
   offers,
   onMouseEnter,
   onMouseLeave,
@@ -32,4 +32,7 @@ export const OffersList: React.FC<OffersListProps> = ({
     ))}
   </div>
 );
+
+export const OffersList = React.memo(OffersListComponent);
+OffersList.displayName = 'OffersList';
 
