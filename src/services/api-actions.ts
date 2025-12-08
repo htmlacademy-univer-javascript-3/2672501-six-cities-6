@@ -325,3 +325,67 @@ export const submitReviewAction = createAsyncThunk<
   }
 );
 
+export interface ToggleFavoriteParams {
+  offerId: string;
+  isFavorite: boolean;
+}
+
+export const toggleFavoriteAction = createAsyncThunk<
+  Offer,
+  ToggleFavoriteParams,
+  { extra: AxiosInstance; rejectValue: string }
+>(
+  'offers/toggleFavorite',
+  async ({ offerId, isFavorite }, { extra: api, rejectWithValue }) => {
+    try {
+      const status = isFavorite ? 1 : 0;
+      const { data } = await api.post<Offer>(`/favorite/${offerId}/${status}`);
+
+      if (!data) {
+        return rejectWithValue('Failed to toggle favorite');
+      }
+
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const message = (error.response.data as { message?: string })?.message || `Server error: ${error.response.status}`;
+          return rejectWithValue(message);
+        } else if (error.request) {
+          return rejectWithValue('No response from server. Please check your connection.');
+        }
+      }
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to toggle favorite');
+    }
+  }
+);
+
+export const fetchFavoritesAction = createAsyncThunk<
+  Offer[],
+  void,
+  { extra: AxiosInstance; rejectValue: string }
+>(
+  'offers/fetchFavorites',
+  async (_arg, { extra: api, rejectWithValue }) => {
+    try {
+      const { data } = await api.get<Offer[]>('/favorite');
+
+      if (!data) {
+        return [];
+      }
+
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const message = (error.response.data as { message?: string })?.message || `Server error: ${error.response.status}`;
+          return rejectWithValue(message);
+        } else if (error.request) {
+          return rejectWithValue('No response from server. Please check your connection.');
+        }
+      }
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to load favorites');
+    }
+  }
+);
+

@@ -1,15 +1,35 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Offer } from '../../../types/offer';
+import { toggleFavoriteAction, fetchFavoritesAction } from '../../../services/api-actions';
+import { getAuthorizationStatus } from '../../../app/selectors';
+import { AppDispatch } from '../../../store';
 
 interface FavoriteCardProps {
   offer: Offer;
 }
 
 export const FavoriteCard: React.FC<FavoriteCardProps> = ({ offer }) => {
-  const handleBookmarkClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+
+  const handleBookmarkClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-  };
+    
+    if (authorizationStatus !== 'AUTH') {
+      navigate('/login');
+      return;
+    }
+
+    void dispatch(toggleFavoriteAction({
+      offerId: offer.id,
+      isFavorite: false
+    })).then(() => {
+      void dispatch(fetchFavoritesAction());
+    });
+  }, [dispatch, navigate, authorizationStatus, offer.id]);
 
   return (
     <article className="favorites__card place-card">
@@ -36,7 +56,7 @@ export const FavoriteCard: React.FC<FavoriteCardProps> = ({ offer }) => {
             <span className="place-card__price-text">/&nbsp;night</span>
           </div>
           <button
-            className="place-card__bookmark-button place-card__bookmark-button--active button"
+            className={`place-card__bookmark-button ${offer.isFavorite ? 'place-card__bookmark-button--active' : ''} button`}
             type="button"
             onClick={handleBookmarkClick}
           >

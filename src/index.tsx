@@ -4,12 +4,16 @@ import { Provider } from 'react-redux';
 import { App } from './App';
 import { store, AppDispatch } from './store';
 import { setCity } from './app/action';
-import { fetchOffersAction, checkAuthAction } from './services/api-actions';
+import { fetchOffersAction, checkAuthAction, fetchFavoritesAction } from './services/api-actions';
 import 'leaflet/dist/leaflet.css';
 
 const dispatch: AppDispatch = store.dispatch;
 dispatch(setCity('Paris'));
-dispatch(checkAuthAction());
+dispatch(checkAuthAction()).then((result) => {
+  if (checkAuthAction.fulfilled.match(result)) {
+    void dispatch(fetchFavoritesAction());
+  }
+});
 dispatch(fetchOffersAction());
 
 const root = ReactDOM.createRoot(

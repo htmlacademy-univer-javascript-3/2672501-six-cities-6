@@ -5,6 +5,7 @@ import { OffersList } from '../../shared/components/OffersList';
 import { Map } from '../../shared/components/Map';
 import { CitiesList } from '../../shared/components/CitiesList';
 import { Spinner } from '../../shared/components/Spinner';
+import { EmptyState } from '../../shared/components/EmptyState';
 import { getCityOffers, getCity, getIsLoading, getAuthorizationStatus, getUser, getFavoriteCount } from '../../app/selectors';
 import { setCity, setAuthorizationStatus } from '../../app/action';
 import { TOKEN_KEY } from '../../services/api';
@@ -118,17 +119,22 @@ export const MainPage: React.FC = () => {
         </div>
       </header>
 
-      <main className="page__main page__main--index">
+      <main className={`page__main page__main--index ${!isLoading && cityOffers.length === 0 ? 'page__main--index-empty' : ''}`}>
         <h1 className="visually-hidden">Cities</h1>
         <CitiesList cities={CITIES} activeCity={activeCity} onCityClick={handleCityClick} />
         <div className="cities">
-          <div className="cities__places-container container">
-            <section className="cities__places places" style={isLoading ? LOADING_STYLES : undefined}>
-              <h2 className="visually-hidden">Places</h2>
-              {isLoading ? (
+          <div className={`cities__places-container container ${!isLoading && cityOffers.length === 0 ? 'cities__places-container--empty' : ''}`}>
+            {isLoading ? (
+              <section className="cities__places places" style={LOADING_STYLES}>
+                <h2 className="visually-hidden">Places</h2>
                 <Spinner />
-              ) : (
-                <>
+              </section>
+            ) : cityOffers.length === 0 ? (
+              <EmptyState cityName={activeCity} />
+            ) : (
+              <>
+                <section className="cities__places places">
+                  <h2 className="visually-hidden">Places</h2>
                   <b className="places__found">{cityOffers.length} places to stay in {activeCity}</b>
                   <form className="places__sorting" action="#" method="get">
                     <span className="places__sorting-caption">Sort by</span>
@@ -178,14 +184,14 @@ export const MainPage: React.FC = () => {
                     onMouseEnter={handleCardMouseEnter}
                     onMouseLeave={handleCardMouseLeave}
                   />
-                </>
-              )}
-            </section>
-            <div className="cities__right-section">
-              <section className="cities__map map">
-                <Map offers={cityOffers} center={cityCenter} activeOfferId={activeCardId} />
-              </section>
-            </div>
+                </section>
+                <div className="cities__right-section">
+                  <section className="cities__map map">
+                    <Map offers={cityOffers} center={cityCenter} activeOfferId={activeCardId} />
+                  </section>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>

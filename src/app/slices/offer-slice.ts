@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { Offer } from '../../types/offer';
 import { Review } from '../../types/review';
-import { fetchOfferAction, fetchNearbyOffersAction, fetchReviewsAction } from '../../services/api-actions';
+import { fetchOfferAction, fetchNearbyOffersAction, fetchReviewsAction, toggleFavoriteAction } from '../../services/api-actions';
 
 export interface OfferState {
   currentOffer: Offer | null;
@@ -59,6 +59,14 @@ export const offerReducer = createReducer(initialState, (builder) => {
     })
     .addCase(fetchReviewsAction.rejected, (state) => {
       state.reviews = [];
+    })
+    .addCase(toggleFavoriteAction.fulfilled, (state, action) => {
+      if (state.currentOffer && state.currentOffer.id === action.payload.id) {
+        state.currentOffer = action.payload;
+      }
+      state.nearbyOffers = state.nearbyOffers.map((offer) =>
+        offer.id === action.payload.id ? action.payload : offer
+      );
     });
 });
 
