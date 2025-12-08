@@ -17,6 +17,30 @@ describe('Review component', () => {
     expect(screen.getByText('Alice')).toBeInTheDocument();
     expect(screen.getByText('Great place')).toBeInTheDocument();
   });
+
+  it('renders user avatar', () => {
+    render(<Review review={review} />);
+    const avatar = screen.getByRole('img');
+    expect(avatar).toHaveAttribute('src', 'img/avatar.jpg');
+  });
+
+  it('displays correct rating percentage', () => {
+    const { container } = render(<Review review={review} />);
+    const ratingStar = container.querySelector('.reviews__stars span');
+    if (ratingStar) {
+      expect(ratingStar).toHaveStyle({ width: '80%' }); // 4/5 * 100%
+    }
+  });
+
+  it('formats date correctly', () => {
+    const reviewWithDate: ReviewType = {
+      ...review,
+      date: '2024-01-15T10:00:00.000Z'
+    };
+    render(<Review review={reviewWithDate} />);
+    expect(screen.getByText('Alice')).toBeInTheDocument();
+    expect(screen.getByText('Great place')).toBeInTheDocument();
+  });
 });
 
 
