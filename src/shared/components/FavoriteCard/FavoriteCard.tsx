@@ -17,7 +17,7 @@ export const FavoriteCard: React.FC<FavoriteCardProps> = ({ offer }) => {
 
   const handleBookmarkClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    
+
     if (authorizationStatus !== 'AUTH') {
       navigate('/login');
       return;

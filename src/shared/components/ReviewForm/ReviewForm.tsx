@@ -24,9 +24,9 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ offerId }) => {
     setError(null);
   }, []);
 
-  const isFormValid = useMemo(() => {
-    return rating !== '' && comment.trim().length >= 50 && comment.trim().length <= 300;
-  }, [rating, comment]);
+  const isFormValid = useMemo(() => (
+    rating !== '' && comment.trim().length >= 50 && comment.trim().length <= 300
+  ), [rating, comment]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

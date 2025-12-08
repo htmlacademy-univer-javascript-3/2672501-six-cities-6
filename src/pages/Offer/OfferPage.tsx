@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { Link, useParams, Navigate, useNavigate } from 'react-router-dom';
+import { Spinner } from '../../shared/components/Spinner';
 import { useSelector, useDispatch } from 'react-redux';
 import { ReviewForm } from '../../shared/components/ReviewForm';
 import { ReviewsList } from '../../shared/components/ReviewsList';
 import { Map } from '../../shared/components/Map';
 import { OffersList } from '../../shared/components/OffersList';
-import { Spinner } from '../../shared/components/Spinner';
 import {
   getCurrentOffer,
   getNearbyOffers,
@@ -17,13 +17,6 @@ import {
 } from '../../app/selectors';
 import { fetchOfferAction, fetchNearbyOffersAction, fetchReviewsAction, toggleFavoriteAction, fetchFavoritesAction } from '../../services/api-actions';
 import { AppDispatch } from '../../store';
-
-const LOADING_STYLES: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  minHeight: 'calc(100vh - 180px)'
-};
 
 export const OfferPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -44,6 +37,16 @@ export const OfferPage: React.FC = () => {
       void dispatch(fetchReviewsAction(id));
     }
   }, [id, dispatch]);
+
+  const mapCenter: [number, number] = useMemo(() => {
+    if (!offer) {
+      return [0, 0];
+    }
+    return [
+      offer.location.latitude,
+      offer.location.longitude
+    ];
+  }, [offer]);
 
   const handleBookmarkClick = useCallback(() => {
     if (!offer) {
@@ -78,7 +81,7 @@ export const OfferPage: React.FC = () => {
           </div>
         </header>
         <main className="page__main page__main--offer">
-          <div style={LOADING_STYLES}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 180px)' }}>
             <Spinner />
           </div>
         </main>
@@ -89,11 +92,6 @@ export const OfferPage: React.FC = () => {
   if (!offer) {
     return <Navigate to="/404" replace />;
   }
-
-  const mapCenter: [number, number] = useMemo(() => [
-    offer.location.latitude,
-    offer.location.longitude
-  ], [offer.location.latitude, offer.location.longitude]);
 
   return (
     <div className="page">

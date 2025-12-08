@@ -30,9 +30,8 @@ const getErrorMessage = (action: unknown): string => {
   return 'Failed to load offers';
 };
 
-const updateOfferInList = (offers: Offer[], updatedOffer: Offer): Offer[] => {
-  return offers.map((offer) => offer.id === updatedOffer.id ? updatedOffer : offer);
-};
+const updateOfferInList = (offers: Offer[], updatedOffer: Offer): Offer[] =>
+  offers.map((offer) => offer.id === updatedOffer.id ? updatedOffer : offer);
 
 export const offersReducer = createReducer(initialState, (builder) => {
   builder

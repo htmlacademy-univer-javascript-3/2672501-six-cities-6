@@ -4,8 +4,6 @@ import { Offer } from '../types/offer';
 import { Review } from '../types/review';
 import { AuthInfo } from '../types/auth';
 import type { AuthorizationStatus } from './slices/auth-slice';
-import type { AuthState } from './slices/auth-slice';
-import type { OfferState } from './slices/offer-slice';
 
 export const getOffers = (state: RootState): Offer[] => state.offers.offers;
 
@@ -41,34 +39,16 @@ export const getFavoriteCount = createSelector(
 );
 
 // Auth selectors
-export const getAuthorizationStatus = (state: RootState): AuthorizationStatus => {
-  const authState = state.auth as AuthState;
-  return authState.authorizationStatus;
-};
+export const getAuthorizationStatus = (state: RootState): AuthorizationStatus => state.auth.authorizationStatus;
 
-export const getUser = (state: RootState): AuthInfo | null => {
-  const authState = state.auth as AuthState;
-  return authState.user;
-};
+export const getUser = (state: RootState): AuthInfo | null => state.auth.user;
 
 // Offer selectors
-export const getCurrentOffer = (state: RootState): Offer | null => {
-  const offerState = state.offer as OfferState;
-  return offerState.currentOffer;
-};
+export const getCurrentOffer = (state: RootState): Offer | null => state.offer.currentOffer;
 
-export const getNearbyOffers = (state: RootState): Offer[] => {
-  const offerState = state.offer as OfferState;
-  return offerState.nearbyOffers;
-};
+export const getNearbyOffers = (state: RootState): Offer[] => state.offer.nearbyOffers;
 
-export const getReviews = (state: RootState): Review[] => {
-  const offerState = state.offer as OfferState;
-  return offerState.reviews;
-};
+export const getReviews = (state: RootState): Review[] => state.offer.reviews;
 
-export const getIsLoadingOffer = (state: RootState): boolean => {
-  const offerState = state.offer as OfferState;
-  return offerState.isLoadingOffer;
-};
+export const getIsLoadingOffer = (state: RootState): boolean => state.offer.isLoadingOffer;
 
