@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { Offer } from '../../types/offer';
-import { fetchOffersAction } from '../../services/api-actions';
+import { fetchOffersAction, toggleFavoriteAction } from '../../services/api-actions';
 import { setCity } from '../action';
 
 export interface OffersState {
@@ -30,6 +30,10 @@ const getErrorMessage = (action: unknown): string => {
   return 'Failed to load offers';
 };
 
+const updateOfferInList = (offers: Offer[], updatedOffer: Offer): Offer[] => {
+  return offers.map((offer) => offer.id === updatedOffer.id ? updatedOffer : offer);
+};
+
 export const offersReducer = createReducer(initialState, (builder) => {
   builder
     .addCase(setCity, (state, action) => {
@@ -47,6 +51,9 @@ export const offersReducer = createReducer(initialState, (builder) => {
     .addCase(fetchOffersAction.rejected, (state, action) => {
       state.isLoading = false;
       state.error = getErrorMessage(action);
+    })
+    .addCase(toggleFavoriteAction.fulfilled, (state, action) => {
+      state.offers = updateOfferInList(state.offers, action.payload);
     });
 });
 

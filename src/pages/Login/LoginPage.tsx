@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginAction } from '../../services/api-actions';
+import { loginAction, fetchFavoritesAction } from '../../services/api-actions';
 import { AppDispatch } from '../../store';
 import { getAuthorizationStatus } from '../../app/selectors';
 
@@ -56,6 +56,7 @@ export const LoginPage: React.FC = () => {
       const result = await dispatch(loginAction({ email: trimmedEmail, password: trimmedPassword }));
 
       if (loginAction.fulfilled.match(result)) {
+        void dispatch(fetchFavoritesAction());
         navigate('/');
       } else if (loginAction.rejected.match(result)) {
         const errorMessage = result.payload || 'Failed to login. Please check your credentials.';

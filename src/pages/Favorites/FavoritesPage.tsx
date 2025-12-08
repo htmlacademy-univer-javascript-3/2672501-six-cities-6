@@ -1,14 +1,28 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FavoriteCard } from '../../shared/components/FavoriteCard';
+import { Spinner } from '../../shared/components/Spinner';
 import { Offer } from '../../types/offer';
-import { getOffers, getFavoriteCount } from '../../app/selectors';
+import { getFavoriteCount, getAuthorizationStatus, getUser, getFavorites, getIsLoadingFavorites } from '../../app/selectors';
+import { fetchFavoritesAction } from '../../services/api-actions';
+import { AppDispatch } from '../../store';
 
 export const FavoritesPage: React.FC = () => {
-  const offers = useSelector(getOffers);
+  const dispatch = useDispatch<AppDispatch>();
+  const favoriteOffers = useSelector(getFavorites);
+  const isLoadingFavorites = useSelector(getIsLoadingFavorites);
+  const favoriteCount = useSelector(getFavoriteCount);
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const user = useSelector(getUser);
+
+  useEffect(() => {
+    if (authorizationStatus === 'AUTH') {
+      void dispatch(fetchFavoritesAction());
+    }
+  }, [dispatch, authorizationStatus]);
+
   const favoriteOffersByCity = useMemo(() => {
-    const favoriteOffers = offers.filter((offer) => offer.isFavorite);
     const groupedByCity: Record<string, Offer[]> = {};
 
     favoriteOffers.forEach((offer) => {
@@ -20,10 +34,9 @@ export const FavoritesPage: React.FC = () => {
     });
 
     return groupedByCity;
-  }, [offers]);
+  }, [favoriteOffers]);
 
   const cities = Object.keys(favoriteOffersByCity);
-  const favoriteCount = useSelector(getFavoriteCount);
 
   return (
     <div className="page">
@@ -37,19 +50,30 @@ export const FavoritesPage: React.FC = () => {
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <Link className="header__nav-link header__nav-link--profile" to="/favorites">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                    <span className="header__favorite-count">{favoriteCount}</span>
-                  </Link>
-                </li>
-                <li className="header__nav-item">
-                  <Link className="header__nav-link" to="/login">
-                    <span className="header__signout">Sign out</span>
-                  </Link>
-                </li>
+                {authorizationStatus === 'AUTH' && user ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link className="header__nav-link header__nav-link--profile" to="/favorites">
+                        <div className="header__avatar-wrapper user__avatar-wrapper">
+                          <img className="header__avatar user__avatar" src={user.avatarUrl} alt={user.name} />
+                        </div>
+                        <span className="header__user-name user__name">{user.email}</span>
+                        <span className="header__favorite-count">{favoriteCount}</span>
+                      </Link>
+                    </li>
+                    <li className="header__nav-item">
+                      <Link className="header__nav-link" to="/login">
+                        <span className="header__signout">Sign out</span>
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item">
+                    <Link className="header__nav-link" to="/login">
+                      <span className="header__login">Sign in</span>
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
@@ -60,7 +84,11 @@ export const FavoritesPage: React.FC = () => {
         <div className="page__favorites-container container">
           <section className="favorites">
             <h1 className="favorites__title">Saved listing</h1>
-            {cities.length > 0 ? (
+            {isLoadingFavorites ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+                <Spinner />
+              </div>
+            ) : cities.length > 0 ? (
               <ul className="favorites__list">
                 {cities.map((city) => (
                   <li key={city} className="favorites__locations-items">

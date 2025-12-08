@@ -24,9 +24,20 @@ export const getCityOffers = createSelector(
 
 export const getIsLoading = (state: RootState): boolean => state.offers.isLoading;
 
+// Favorites selectors
+export const getFavorites = (state: RootState): Offer[] => {
+  const favoritesState = state.favorites as { favorites: Offer[] };
+  return favoritesState.favorites;
+};
+
+export const getIsLoadingFavorites = (state: RootState): boolean => {
+  const favoritesState = state.favorites as { isLoading: boolean };
+  return favoritesState.isLoading;
+};
+
 export const getFavoriteCount = createSelector(
-  [getOffers],
-  (offers: Offer[]): number => offers.filter((offer) => offer.isFavorite).length
+  [getFavorites],
+  (favorites: Offer[]): number => favorites.length
 );
 
 // Auth selectors

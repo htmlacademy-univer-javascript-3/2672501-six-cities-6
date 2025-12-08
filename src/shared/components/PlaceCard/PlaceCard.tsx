@@ -1,6 +1,10 @@
 import React, { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Offer } from '../../../types/offer';
+import { toggleFavoriteAction, fetchFavoritesAction } from '../../../services/api-actions';
+import { getAuthorizationStatus } from '../../../app/selectors';
+import { AppDispatch } from '../../../store';
 
 interface PlaceCardProps {
   offer: Offer;
@@ -17,9 +21,25 @@ const PlaceCardComponent: React.FC<PlaceCardProps> = ({
   cardClassName = 'cities__card place-card',
   imageWrapperClassName = 'cities__image-wrapper place-card__image-wrapper'
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+
   const handleBookmarkClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-  }, []);
+    
+    if (authorizationStatus !== 'AUTH') {
+      navigate('/login');
+      return;
+    }
+
+    void dispatch(toggleFavoriteAction({
+      offerId: offer.id,
+      isFavorite: !offer.isFavorite
+    })).then(() => {
+      void dispatch(fetchFavoritesAction());
+    });
+  }, [dispatch, navigate, authorizationStatus, offer.id, offer.isFavorite]);
 
   const handleMouseEnter = useCallback(() => {
     onMouseEnter?.(offer.id);
