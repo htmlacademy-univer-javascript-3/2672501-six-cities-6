@@ -27,7 +27,7 @@ const PlaceCardComponent: React.FC<PlaceCardProps> = ({
 
   const handleBookmarkClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    
+
     if (authorizationStatus !== 'AUTH') {
       navigate('/login');
       return;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -14,6 +13,7 @@ import { NotFoundPage } from './pages/NotFound';
 import { LoginPage } from './pages/Login';
 import { OfferPage } from './pages/Offer';
 import { PrivateRoute } from './shared/components/PrivateRoute';
+import type { RootState } from './store';
 
 // Мокаем карту, чтобы исключить leaflet из тестов маршрутизации
 vi.mock('./shared/components/Map', () => ({
@@ -27,10 +27,10 @@ const rootReducer = {
   favorites: favoritesReducer
 };
 
-const createTestStore = (preloadedState?: Partial<ReturnType<typeof configureStore>>) =>
+const createTestStore = (preloadedState?: Partial<RootState>) =>
   configureStore({
     reducer: rootReducer,
-    preloadedState: preloadedState as any
+    preloadedState: preloadedState as Partial<RootState>
   });
 
 describe('App routing', () => {

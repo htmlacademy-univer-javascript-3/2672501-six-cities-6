@@ -5,7 +5,7 @@ import { Review as ReviewType } from '../../../types/review';
 
 const review: ReviewType = {
   id: '1',
-  user: { name: 'Alice', avatarUrl: 'img/avatar.jpg', isPro: false },
+  user: { name: 'Alice', avatarUrl: 'img/avatar.jpg' },
   rating: 4,
   comment: 'Great place',
   date: '2023-10-10'

@@ -7,8 +7,7 @@ const mockReviews: ReviewType[] = [
     id: '1',
     user: {
       name: 'John Doe',
-      avatarUrl: 'https://example.com/avatar1.jpg',
-      isPro: false
+      avatarUrl: 'https://example.com/avatar1.jpg'
     },
     rating: 4,
     comment: 'Great place!',
@@ -18,8 +17,7 @@ const mockReviews: ReviewType[] = [
     id: '2',
     user: {
       name: 'Jane Smith',
-      avatarUrl: 'https://example.com/avatar2.jpg',
-      isPro: true
+      avatarUrl: 'https://example.com/avatar2.jpg'
     },
     rating: 5,
     comment: 'Amazing experience!',

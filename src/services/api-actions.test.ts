@@ -1,6 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import MockAdapter from 'axios-mock-adapter';
-import { vi, describe, it, beforeEach, expect } from 'vitest';
 import { createAPI } from './api';
 import {
   fetchOffersAction,
@@ -43,7 +42,12 @@ describe('api-actions', () => {
     const action = fetchOffersAction();
     await action(dispatch, getState, api);
 
-    const types = dispatch.mock.calls.map((call) => call[0].type);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const types = dispatch.mock.calls.map((call) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const actionCall: { type: string } = call[0] as { type: string };
+      return actionCall.type;
+    });
     expect(types).toContain(fetchOffersAction.pending.type);
     expect(types).toContain(fetchOffersAction.fulfilled.type);
   });
@@ -53,7 +57,12 @@ describe('api-actions', () => {
 
     const action = fetchOffersAction();
     await action(dispatch, getState, api);
-    const types = dispatch.mock.calls.map((call) => call[0].type);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const types = dispatch.mock.calls.map((call) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const actionCall: { type: string } = call[0] as { type: string };
+      return actionCall.type;
+    });
     expect(types).toContain(fetchOffersAction.rejected.type);
   });
 
@@ -63,7 +72,12 @@ describe('api-actions', () => {
 
     const action = toggleFavoriteAction({ offerId: '2', isFavorite: true });
     await action(dispatch, getState, api);
-    const types = dispatch.mock.calls.map((call) => call[0].type);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const types = dispatch.mock.calls.map((call) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const actionCall: { type: string } = call[0] as { type: string };
+      return actionCall.type;
+    });
     expect(types).toContain(toggleFavoriteAction.fulfilled.type);
   });
 
@@ -73,7 +87,12 @@ describe('api-actions', () => {
 
     const action = fetchFavoritesAction();
     await action(dispatch, getState, api);
-    const types = dispatch.mock.calls.map((call) => call[0].type);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const types = dispatch.mock.calls.map((call) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const actionCall: { type: string } = call[0] as { type: string };
+      return actionCall.type;
+    });
     expect(types).toContain(fetchFavoritesAction.fulfilled.type);
   });
 
@@ -81,7 +100,12 @@ describe('api-actions', () => {
     mockApi.onGet('/login').reply(401);
     const action = checkAuthAction();
     await action(dispatch, getState, api);
-    const types = dispatch.mock.calls.map((call) => call[0].type);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const types = dispatch.mock.calls.map((call) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const actionCall: { type: string } = call[0] as { type: string };
+      return actionCall.type;
+    });
     expect(types).toContain(checkAuthAction.rejected.type);
   });
 });
