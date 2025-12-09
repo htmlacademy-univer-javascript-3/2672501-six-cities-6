@@ -50,7 +50,6 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ offerId }) => {
       if (submitReviewAction.fulfilled.match(result)) {
         setRating('');
         setComment('');
-        // Перезагружаем список комментариев после успешной отправки
         void dispatch(fetchReviewsAction(offerId));
       } else if (submitReviewAction.rejected.match(result)) {
         setError(result.payload || 'Failed to submit review. Please try again.');

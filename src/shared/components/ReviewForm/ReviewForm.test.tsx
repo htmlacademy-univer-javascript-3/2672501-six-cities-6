@@ -88,11 +88,9 @@ describe('ReviewForm', () => {
       </Provider>
     );
 
-    // Выбираем рейтинг через label с title
     const rating5Label = screen.getByTitle(/perfect/i);
     await user.click(rating5Label);
 
-    // Вводим комментарий (минимум 50 символов)
     const commentInput = screen.getByPlaceholderText(/Tell how was your stay/i);
     await user.type(commentInput, 'This is a test comment that is longer than 50 characters to pass validation.');
 
@@ -114,7 +112,6 @@ describe('ReviewForm', () => {
     const rating4Label = screen.getByTitle(/good/i);
     await user.click(rating4Label);
 
-    // Проверяем что рейтинг выбран через скрытый input
     const rating4Input = document.getElementById('4-stars') as HTMLInputElement;
     expect(rating4Input).toBeChecked();
   });
@@ -155,15 +152,12 @@ describe('ReviewForm', () => {
       </Provider>
     );
 
-    // Выбираем рейтинг
     const rating5Label = screen.getByTitle(/perfect/i);
     await user.click(rating5Label);
 
-    // Вводим комментарий
     const commentInput = screen.getByPlaceholderText(/Tell how was your stay/i);
     await user.type(commentInput, 'This is a test comment that is longer than 50 characters to pass validation.');
 
-    // Отправляем форму
     const submitButton = screen.getByRole('button', { name: /Submit/i });
     await user.click(submitButton);
 
@@ -185,14 +179,13 @@ describe('ReviewForm', () => {
     await user.click(rating5Label);
 
     const commentInput = screen.getByPlaceholderText(/Tell how was your stay/i);
-    await user.type(commentInput, 'Short'); // Меньше 50 символов
+    await user.type(commentInput, 'Short');
 
     const submitButton = screen.getByRole('button', { name: /Submit/i });
     expect(submitButton).toBeDisabled();
   });
 
   it('should disable form during submission', async () => {
-    // Мокаем успешный ответ, но с небольшой задержкой
     const review = {
       id: '1',
       user: { name: 'Test User', avatarUrl: 'img/avatar.jpg' },
@@ -224,12 +217,10 @@ describe('ReviewForm', () => {
 
     await user.click(submitButton);
 
-    // Проверяем, что после клика форма становится заблокированной
     await waitFor(() => {
       expect(submitButton).toBeDisabled();
     }, { timeout: 500 });
 
-    // Ждем завершения запроса
     await waitFor(() => {
       expect(mockApi.history.post.length).toBeGreaterThan(0);
     }, { timeout: 2000 });

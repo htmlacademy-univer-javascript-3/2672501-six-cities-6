@@ -1,20 +1,28 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FavoriteCard } from '../../shared/components/FavoriteCard';
 import { Spinner } from '../../shared/components/Spinner';
 import { Offer } from '../../types/offer';
-import { getFavoriteCount, getAuthorizationStatus, getUser, getFavorites, getIsLoadingFavorites } from '../../app/selectors';
+import { getFavoriteCount, getAuthorizationStatus, getUser, getFavorites, getIsLoadingFavorites, getFavoritesError } from '../../app/selectors';
 import { fetchFavoritesAction } from '../../services/api-actions';
+import { setAuthorizationStatus } from '../../app/action';
+import { TOKEN_KEY } from '../../services/api';
 import { AppDispatch } from '../../store';
 
 export const FavoritesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const favoriteOffers = useSelector(getFavorites);
   const isLoadingFavorites = useSelector(getIsLoadingFavorites);
+  const error = useSelector(getFavoritesError);
   const favoriteCount = useSelector(getFavoriteCount);
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const user = useSelector(getUser);
+
+  const handleSignOut = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY);
+    dispatch(setAuthorizationStatus('NO_AUTH'));
+  }, [dispatch]);
 
   useEffect(() => {
     if (authorizationStatus === 'AUTH') {
@@ -62,7 +70,7 @@ export const FavoritesPage: React.FC = () => {
                       </Link>
                     </li>
                     <li className="header__nav-item">
-                      <Link className="header__nav-link" to="/login">
+                      <Link className="header__nav-link" to="/" onClick={handleSignOut}>
                         <span className="header__signout">Sign out</span>
                       </Link>
                     </li>
@@ -89,6 +97,14 @@ export const FavoritesPage: React.FC = () => {
                 return (
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
                     <Spinner />
+                  </div>
+                );
+              }
+              if (error) {
+                return (
+                  <div className="favorites__status-wrapper">
+                    <b className="favorites__status" style={{ color: 'red' }}>Error loading favorites</b>
+                    <p className="favorites__status-description">{error}</p>
                   </div>
                 );
               }

@@ -23,15 +23,12 @@ export const fetchOffersAction = createAsyncThunk<
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // Сервер ответил с ошибкой
           const message = (error.response.data as { message?: string })?.message || `Server error: ${error.response.status}`;
           return rejectWithValue(message);
         } else if (error.request) {
-          // Запрос был отправлен, но ответа не получено
           return rejectWithValue('No response from server. Please check your connection.');
         }
       }
-      // Ошибка при настройке запроса
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to load offers');
     }
   }
@@ -87,7 +84,6 @@ export const loginAction = createAsyncThunk<
           const responseData: unknown = error.response.data;
 
           if (status === 400) {
-            // Try to extract error message from various possible formats
             if (typeof responseData === 'string') {
               message = responseData;
             } else if (responseData && typeof responseData === 'object') {
@@ -99,7 +95,6 @@ export const loginAction = createAsyncThunk<
                 [key: string]: unknown;
               };
 
-              // Try different fields for error message
               if (dataObj.message) {
                 message = dataObj.message;
               } else if (dataObj.error) {
@@ -107,12 +102,10 @@ export const loginAction = createAsyncThunk<
               } else if (dataObj.details) {
                 message = dataObj.details;
               } else if (Array.isArray(dataObj.errors) && dataObj.errors.length > 0) {
-                // Handle array of validation errors
                 message = dataObj.errors
                   .map((err) => err.message || err.path || 'Validation error')
                   .join(', ');
               } else {
-                // Try to find any string value in the response
                 const stringValues = Object.values(dataObj).filter(
                   (val) => typeof val === 'string' && val.length > 0
                 );
