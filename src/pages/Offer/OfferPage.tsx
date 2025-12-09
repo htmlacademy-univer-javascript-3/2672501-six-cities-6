@@ -10,12 +10,16 @@ import {
   getCurrentOffer,
   getNearbyOffers,
   getReviews,
+  getSortedAndLimitedReviews,
   getIsLoadingOffer,
+  getOfferError,
   getFavoriteCount,
   getAuthorizationStatus,
   getUser
 } from '../../app/selectors';
 import { fetchOfferAction, fetchNearbyOffersAction, fetchReviewsAction, toggleFavoriteAction, fetchFavoritesAction } from '../../services/api-actions';
+import { setAuthorizationStatus } from '../../app/action';
+import { TOKEN_KEY } from '../../services/api';
 import { AppDispatch } from '../../store';
 
 export const OfferPage: React.FC = () => {
@@ -24,8 +28,10 @@ export const OfferPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const offer = useSelector(getCurrentOffer);
   const nearbyOffers = useSelector(getNearbyOffers);
-  const reviews = useSelector(getReviews);
+  const allReviews = useSelector(getReviews);
+  const displayedReviews = useSelector(getSortedAndLimitedReviews);
   const isLoadingOffer = useSelector(getIsLoadingOffer);
+  const error = useSelector(getOfferError);
   const favoriteCount = useSelector(getFavoriteCount);
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const user = useSelector(getUser);
@@ -47,6 +53,20 @@ export const OfferPage: React.FC = () => {
       offer.location.longitude
     ];
   }, [offer]);
+
+  const displayedNearbyOffers = useMemo(() => nearbyOffers.slice(0, 3), [nearbyOffers]);
+
+  const mapOffers = useMemo(() => {
+    if (!offer) {
+      return displayedNearbyOffers;
+    }
+    return [offer, ...displayedNearbyOffers];
+  }, [offer, displayedNearbyOffers]);
+
+  const handleSignOut = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY);
+    dispatch(setAuthorizationStatus('NO_AUTH'));
+  }, [dispatch]);
 
   const handleBookmarkClick = useCallback(() => {
     if (!offer) {
@@ -77,12 +97,96 @@ export const OfferPage: React.FC = () => {
                   <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
                 </Link>
               </div>
+              <nav className="header__nav">
+                <ul className="header__nav-list">
+                  {authorizationStatus === 'AUTH' && user ? (
+                    <>
+                      <li className="header__nav-item user">
+                        <Link className="header__nav-link header__nav-link--profile" to="/favorites">
+                          <div className="header__avatar-wrapper user__avatar-wrapper">
+                            <img className="user__avatar" src={user.avatarUrl} width="54" height="54" alt="User avatar" />
+                          </div>
+                          <span className="header__user-name user__name">{user.email}</span>
+                          <span className="header__favorite-count">{favoriteCount}</span>
+                        </Link>
+                      </li>
+                      <li className="header__nav-item">
+                        <Link className="header__nav-link" to="/" onClick={handleSignOut}>
+                          <span className="header__signout">Sign out</span>
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
+                    <li className="header__nav-item user">
+                      <Link className="header__nav-link header__nav-link--profile" to="/login">
+                        <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                        <span className="header__login">Sign in</span>
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+              </nav>
             </div>
           </div>
         </header>
         <main className="page__main page__main--offer">
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 180px)' }}>
             <Spinner />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error && !offer) {
+    return (
+      <div className="page">
+        <header className="header">
+          <div className="container">
+            <div className="header__wrapper">
+              <div className="header__left">
+                <Link className="header__logo-link" to="/">
+                  <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
+                </Link>
+              </div>
+              <nav className="header__nav">
+                <ul className="header__nav-list">
+                  {authorizationStatus === 'AUTH' && user ? (
+                    <>
+                      <li className="header__nav-item user">
+                        <Link className="header__nav-link header__nav-link--profile" to="/favorites">
+                          <div className="header__avatar-wrapper user__avatar-wrapper">
+                            <img className="user__avatar" src={user.avatarUrl} width="54" height="54" alt="User avatar" />
+                          </div>
+                          <span className="header__user-name user__name">{user.email}</span>
+                          <span className="header__favorite-count">{favoriteCount}</span>
+                        </Link>
+                      </li>
+                      <li className="header__nav-item">
+                        <Link className="header__nav-link" to="/" onClick={handleSignOut}>
+                          <span className="header__signout">Sign out</span>
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
+                    <li className="header__nav-item user">
+                      <Link className="header__nav-link header__nav-link--profile" to="/login">
+                        <div className="header__avatar-wrapper user__avatar-wrapper"></div>
+                        <span className="header__login">Sign in</span>
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </header>
+        <main className="page__main page__main--offer">
+          <div className="offer__container container">
+            <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+              <b style={{ fontSize: '24px', color: 'red', display: 'block', marginBottom: '10px' }}>Error loading offer</b>
+              <p style={{ fontSize: '16px', color: '#666' }}>{error}</p>
+            </div>
           </div>
         </main>
       </div>
@@ -117,7 +221,7 @@ export const OfferPage: React.FC = () => {
                       </Link>
                     </li>
                     <li className="header__nav-item">
-                      <Link className="header__nav-link" to="/login">
+                      <Link className="header__nav-link" to="/" onClick={handleSignOut}>
                         <span className="header__signout">Sign out</span>
                       </Link>
                     </li>
@@ -140,7 +244,7 @@ export const OfferPage: React.FC = () => {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {offer.images?.map((image) => (
+              {offer.images?.slice(0, 6).map((image) => (
                 <div key={image} className="offer__image-wrapper">
                   <img className="offer__image" src={image} alt="Place photo" />
                 </div>
@@ -171,10 +275,10 @@ export const OfferPage: React.FC = () => {
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
-                  <span style={{width: `${offer.rating}%`}}></span>
+                  <span style={{width: `${(Math.round(offer.rating) / 5) * 100}%`}}></span>
                   <span className="visually-hidden">Rating</span>
                 </div>
-                <span className="offer__rating-value rating__value">{offer.ratingValue}</span>
+                <span className="offer__rating-value rating__value">{offer.ratingValue || offer.rating}</span>
               </div>
               <ul className="offer__features">
                 <li className="offer__feature offer__feature--entire">
@@ -229,7 +333,7 @@ export const OfferPage: React.FC = () => {
                 </div>
               )}
               <section className="offer__reviews reviews">
-                <ReviewsList reviews={reviews} />
+                <ReviewsList reviews={displayedReviews} totalCount={allReviews.length} />
                 {authorizationStatus === 'AUTH' && user && offer && (
                   <ReviewForm offerId={offer.id} />
                 )}
@@ -237,14 +341,14 @@ export const OfferPage: React.FC = () => {
             </div>
           </div>
           <section className="offer__map map">
-            <Map offers={nearbyOffers} center={mapCenter} />
+            <Map offers={mapOffers} center={mapCenter} activeOfferId={offer.id} />
           </section>
         </section>
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <OffersList
-              offers={nearbyOffers}
+              offers={displayedNearbyOffers}
               containerClassName="near-places__list places__list"
               cardClassName="near-places__card place-card"
               imageWrapperClassName="near-places__image-wrapper place-card__image-wrapper"

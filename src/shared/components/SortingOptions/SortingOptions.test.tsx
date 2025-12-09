@@ -9,7 +9,6 @@ describe('SortingOptions', () => {
     render(<SortingOptions currentSort="Popular" onSortChange={onSortChange} />);
 
     expect(screen.getByText(/Sort by/i)).toBeInTheDocument();
-    // Проверяем что текущая опция отображается в span (а не в списке)
     const sortTypeSpan = screen.getByText(/Sort by/i).nextElementSibling;
     expect(sortTypeSpan?.textContent).toContain('Popular');
   });
@@ -34,12 +33,10 @@ describe('SortingOptions', () => {
     const user = userEvent.setup();
     render(<SortingOptions currentSort="Popular" onSortChange={onSortChange} />);
 
-    // Открываем меню
     const sortType = screen.getByText(/Sort by/i).nextElementSibling;
     if (sortType) {
       await user.click(sortType);
 
-      // Выбираем опцию
       const priceLowToHigh = screen.getByText('Price: low to high');
       await user.click(priceLowToHigh);
 
@@ -53,12 +50,10 @@ describe('SortingOptions', () => {
     const user = userEvent.setup();
     render(<SortingOptions currentSort="Price: low to high" onSortChange={onSortChange} />);
 
-    // Открываем меню
     const sortType = screen.getByText(/Sort by/i).nextElementSibling;
     if (sortType) {
       await user.click(sortType);
 
-      // Проверяем, что активная опция выделена - ищем все элементы с текстом и находим нужный
       const allOptions = screen.getAllByText('Price: low to high');
       const activeOption = allOptions.find((el) => el.closest('li')?.classList.contains('places__option--active'));
       expect(activeOption).toBeTruthy();
@@ -70,16 +65,13 @@ describe('SortingOptions', () => {
     const user = userEvent.setup();
     render(<SortingOptions currentSort="Popular" onSortChange={onSortChange} />);
 
-    // Открываем меню
     const sortType = screen.getByText(/Sort by/i).nextElementSibling;
     if (sortType) {
       await user.click(sortType);
       expect(screen.getByText('Price: low to high')).toBeInTheDocument();
 
-      // Выбираем опцию
       await user.click(screen.getByText('Price: low to high'));
 
-      // После выбора onSortChange должен быть вызван
       expect(onSortChange).toHaveBeenCalled();
     }
   });

@@ -66,7 +66,6 @@ const createTestStore = (authorizationStatus: 'AUTH' | 'NO_AUTH' = 'AUTH') => {
   });
 };
 
-// Мокаем API actions
 vi.mock('../../../services/api-actions', async () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const actual = await vi.importActual<typeof import('../../../services/api-actions')>('../../../services/api-actions');

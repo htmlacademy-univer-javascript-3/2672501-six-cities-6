@@ -6,7 +6,7 @@ import { Map } from '../../shared/components/Map';
 import { CitiesList } from '../../shared/components/CitiesList';
 import { Spinner } from '../../shared/components/Spinner';
 import { EmptyState } from '../../shared/components/EmptyState';
-import { getCityOffers, getCity, getIsLoading, getAuthorizationStatus, getUser, getFavoriteCount } from '../../app/selectors';
+import { getCityOffers, getCity, getIsLoading, getOffersError, getAuthorizationStatus, getUser, getFavoriteCount } from '../../app/selectors';
 import { setCity, setAuthorizationStatus } from '../../app/action';
 import { TOKEN_KEY } from '../../services/api';
 const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
@@ -23,6 +23,7 @@ export const MainPage: React.FC = () => {
   const cityOffers = useSelector(getCityOffers);
   const activeCity = useSelector(getCity);
   const isLoading = useSelector(getIsLoading);
+  const error = useSelector(getOffersError);
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const user = useSelector(getUser);
   const favoriteCount = useSelector(getFavoriteCount);
@@ -133,6 +134,16 @@ export const MainPage: React.FC = () => {
                   </section>
                 );
               }
+              if (error) {
+                return (
+                  <section className="cities__places places">
+                    <div className="cities__status-wrapper tabs__content">
+                      <b className="cities__status" style={{ color: 'red' }}>Error loading offers</b>
+                      <p className="cities__status-description">{error}</p>
+                    </div>
+                  </section>
+                );
+              }
               if (cityOffers.length === 0) {
                 return <EmptyState cityName={activeCity} />;
               }
@@ -142,7 +153,7 @@ export const MainPage: React.FC = () => {
                     <h2 className="visually-hidden">Places</h2>
                     <b className="places__found">{cityOffers.length} places to stay in {activeCity}</b>
                     <form className="places__sorting" action="#" method="get">
-                      <span className="places__sorting-caption">Sort by</span>
+                      <span className="places__sorting-caption" style={{ marginRight: '4px' }}>Sort by</span>
                       <span
                         className="places__sorting-type"
                         tabIndex={0}

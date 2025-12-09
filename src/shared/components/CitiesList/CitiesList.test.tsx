@@ -32,7 +32,6 @@ describe('CitiesList', () => {
     const cologneLink = screen.getByText('Cologne');
     await user.click(cologneLink);
 
-    // Не должно быть ошибок при отсутствии обработчика
     expect(cologneLink).toBeInTheDocument();
   });
 });

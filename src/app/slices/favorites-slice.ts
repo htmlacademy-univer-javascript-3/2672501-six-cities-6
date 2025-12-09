@@ -38,7 +38,6 @@ export const favoritesReducer = createReducer(initialState, (builder) => {
     })
     .addCase(toggleFavoriteAction.fulfilled, (state, action) => {
       if (action.payload.isFavorite) {
-        // Добавляем в избранное, если его там еще нет
         const exists = state.favorites.some((offer) => offer.id === action.payload.id);
         if (!exists) {
           state.favorites.push(action.payload);
@@ -48,7 +47,6 @@ export const favoritesReducer = createReducer(initialState, (builder) => {
           );
         }
       } else {
-        // Удаляем из избранного
         state.favorites = state.favorites.filter((offer) => offer.id !== action.payload.id);
       }
     });

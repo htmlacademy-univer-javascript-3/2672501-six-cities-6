@@ -15,7 +15,6 @@ import { OfferPage } from './pages/Offer';
 import { PrivateRoute } from './shared/components/PrivateRoute';
 import type { RootState } from './store';
 
-// Мокаем карту, чтобы исключить leaflet из тестов маршрутизации
 vi.mock('./shared/components/Map', () => ({
   Map: () => <div data-testid="map-mock" />
 }));
@@ -35,7 +34,6 @@ const createTestStore = (preloadedState?: Partial<RootState>) =>
 
 describe('App routing', () => {
   beforeAll(() => {
-    // silence console errors from React Router for unknown routes
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 

@@ -1,9 +1,12 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useMemo, useCallback } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction, fetchFavoritesAction } from '../../services/api-actions';
 import { AppDispatch } from '../../store';
 import { getAuthorizationStatus } from '../../app/selectors';
+import { setCity } from '../../app/action';
+
+const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
 
 export const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,6 +16,14 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const randomCity = useMemo(() => CITIES[Math.floor(Math.random() * CITIES.length)], []);
+
+  const handleRandomCityClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    dispatch(setCity(randomCity));
+    navigate('/');
+  }, [dispatch, navigate, randomCity]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -31,22 +42,21 @@ export const LoginPage: React.FC = () => {
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
-    // Validate email and password are not empty
     if (!trimmedEmail || !trimmedPassword) {
       setError('Please fill in all fields');
       return;
     }
 
-    // Validate password is not only spaces (password.trim() should not be empty)
-    if (trimmedPassword.length === 0 || /^\s+$/.test(password)) {
-      setError('Password cannot consist of spaces only');
-      return;
-    }
-
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
       setError('Please enter a valid email address');
+      return;
+    }
+
+    const hasLetter = /[a-zA-Z]/.test(trimmedPassword);
+    const hasDigit = /\d/.test(trimmedPassword);
+    if (!hasLetter || !hasDigit) {
+      setError('Password must contain at least one letter and one digit');
       return;
     }
 
@@ -143,8 +153,8 @@ export const LoginPage: React.FC = () => {
           </section>
           <section className="locations locations--login locations--current">
             <div className="locations__item">
-              <a className="locations__item-link" href="#">
-                <span>Amsterdam</span>
+              <a className="locations__item-link" href="#" onClick={handleRandomCityClick}>
+                <span>{randomCity}</span>
               </a>
             </div>
           </section>
