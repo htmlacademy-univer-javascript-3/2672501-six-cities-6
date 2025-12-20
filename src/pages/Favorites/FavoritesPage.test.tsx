@@ -123,7 +123,7 @@ describe('FavoritesPage', () => {
       favorites: { favorites, isLoading: false, error: null }
     });
 
-    const { container } = render(
+    render(
       <Provider store={store}>
         <MemoryRouter>
           <FavoritesPage />
