@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 interface CitiesListProps {
-  cities: string[];
+  cities: readonly string[];
   activeCity: string;
   onCityClick?: (city: string) => void;
 }
