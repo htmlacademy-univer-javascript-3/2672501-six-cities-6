@@ -9,7 +9,7 @@ import { EmptyState } from '../../shared/components/EmptyState';
 import { getCityOffers, getCity, getIsLoading, getOffersError, getAuthorizationStatus, getUser, getFavoriteCount } from '../../app/selectors';
 import { setCity, setAuthorizationStatus } from '../../app/action';
 import { TOKEN_KEY } from '../../services/api';
-const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+import { CITIES } from '../../shared/const';
 
 const LOADING_STYLES: React.CSSProperties = {
   display: 'flex',

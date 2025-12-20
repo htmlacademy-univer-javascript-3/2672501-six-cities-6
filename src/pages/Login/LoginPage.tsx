@@ -5,8 +5,7 @@ import { loginAction, fetchFavoritesAction } from '../../services/api-actions';
 import { AppDispatch } from '../../store';
 import { getAuthorizationStatus } from '../../app/selectors';
 import { setCity } from '../../app/action';
-
-const CITIES = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+import { CITIES } from '../../shared/const';
 
 export const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

@@ -37,11 +37,17 @@ export const OfferPage: React.FC = () => {
   const user = useSelector(getUser);
 
   useEffect(() => {
-    if (id) {
+    let isMounted = true;
+
+    if (isMounted && id) {
       void dispatch(fetchOfferAction(id));
       void dispatch(fetchNearbyOffersAction(id));
       void dispatch(fetchReviewsAction(id));
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [id, dispatch]);
 
   const mapCenter: [number, number] = useMemo(() => {

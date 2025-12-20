@@ -46,6 +46,15 @@ describe('offersReducer', () => {
     expect(state.isLoading).toBe(false);
   });
 
+  it('should handle fetchOffersAction.rejected', () => {
+    const state = offersReducer(
+      { offers: [], city: '', isLoading: true, error: null },
+      { type: fetchOffersAction.rejected.type, payload: 'Error message' }
+    );
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe('Error message');
+  });
+
   it('should update offer on toggleFavoriteAction.fulfilled', () => {
     const initial: OffersState = {
       offers: [makeOffer({ id: '1', isFavorite: false }), makeOffer({ id: '2', isFavorite: false })],
