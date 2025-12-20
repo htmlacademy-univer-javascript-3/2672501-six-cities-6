@@ -37,6 +37,15 @@ describe('favoritesReducer', () => {
     expect(state.favorites.some((o) => o.id === '3')).toBe(true);
   });
 
+  it('should handle fetchFavoritesAction.rejected', () => {
+    const state = favoritesReducer(
+      { favorites: [], isLoading: true, error: null },
+      { type: fetchFavoritesAction.rejected.type, payload: 'Error message' }
+    );
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe('Error message');
+  });
+
   it('should remove from favorites when isFavorite false', () => {
     const initial: FavoritesState = {
       favorites: [makeOffer({ id: '1', isFavorite: true }), makeOffer({ id: '2', isFavorite: true })],
@@ -47,6 +56,19 @@ describe('favoritesReducer', () => {
     const state = favoritesReducer(initial, { type: toggleFavoriteAction.fulfilled.type, payload: updated });
     expect(state.favorites.some((o) => o.id === '1')).toBe(false);
     expect(state.favorites.some((o) => o.id === '2')).toBe(true);
+  });
+
+  it('should update existing favorite on toggleFavoriteAction.fulfilled', () => {
+    const existingOffer = makeOffer({ id: '1', isFavorite: true, title: 'Old Title' });
+    const initial: FavoritesState = {
+      favorites: [existingOffer],
+      isLoading: false,
+      error: null
+    };
+    const updated = makeOffer({ id: '1', isFavorite: true, title: 'New Title' });
+    const state = favoritesReducer(initial, { type: toggleFavoriteAction.fulfilled.type, payload: updated });
+    expect(state.favorites.length).toBe(1);
+    expect(state.favorites[0].title).toBe('New Title');
   });
 });
 

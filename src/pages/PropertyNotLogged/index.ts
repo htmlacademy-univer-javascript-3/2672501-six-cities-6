@@ -1,1 +1,0 @@
-export { PropertyNotLoggedPage } from './PropertyNotLoggedPage';

@@ -32,6 +32,20 @@ describe('authReducer', () => {
     expect(state.user).toEqual(payload);
   });
 
+  it('should reset user on checkAuthAction.rejected', () => {
+    const initial: AuthState = { authorizationStatus: 'AUTH', user: makeAuthInfo() };
+    const state = authReducer(initial, { type: checkAuthAction.rejected.type });
+    expect(state.authorizationStatus).toBe('NO_AUTH');
+    expect(state.user).toBeNull();
+  });
+
+  it('should set user on loginAction.fulfilled', () => {
+    const payload = makeAuthInfo({ email: 'login@test.com' });
+    const state = authReducer(undefined, { type: loginAction.fulfilled.type, payload });
+    expect(state.authorizationStatus).toBe('AUTH');
+    expect(state.user).toEqual(payload);
+  });
+
   it('should reset user on loginAction.rejected', () => {
     const initial: AuthState = { authorizationStatus: 'AUTH', user: makeAuthInfo() };
     const state = authReducer(initial, { type: loginAction.rejected.type });

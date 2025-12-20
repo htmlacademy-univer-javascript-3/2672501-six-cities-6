@@ -25,9 +25,15 @@ export const FavoritesPage: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (authorizationStatus === 'AUTH') {
+    let isMounted = true;
+
+    if (isMounted && authorizationStatus === 'AUTH') {
       void dispatch(fetchFavoritesAction());
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, authorizationStatus]);
 
   const favoriteOffersByCity = useMemo(() => {
